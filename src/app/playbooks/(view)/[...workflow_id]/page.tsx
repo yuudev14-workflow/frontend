@@ -1,10 +1,10 @@
 "use client"
 
-import ReactFlowPlayground from '@/components/ReactFlowPlayground'
+import ReactFlowPlayground from '@/components/react-flow/ReactFlowPlayground'
 import { Button } from '@/components/ui/button'
 import WorkflowService from '@/services/worfklows/workflows'
 import { useQuery } from '@tanstack/react-query'
-import { useParams } from 'next/navigation'
+import { Node } from '@xyflow/react'
 import React, { useMemo } from 'react'
 
 const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }) => {
@@ -16,14 +16,18 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
     }
   })
 
-  const nodes = useMemo(() => {
+  const nodes: Node[] = useMemo(() => {
     if (workflowQuery.data === undefined || !Array.isArray(workflowQuery.data.tasks)) return []
-    return workflowQuery.data.tasks.map((task) => ({
-      id: task.id,
-      data: { label: task.name },
-      position: { x: task.x, y: task.y },
-      ...(task.name === "start" ? { type: "input" } : {})
-    }))
+    return workflowQuery.data.tasks.map((task) => {
+      const data: Node = {
+        id: task.id,
+        data: { 
+          label: task.name },
+        position: { x: task.x, y: task.y },
+        type: task.name === "start" ? "input" : "playbookNodes",
+      }
+      return data
+    })
 
   }, [workflowQuery.data])
 
@@ -34,8 +38,6 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
       id: edge.id,
       source: edge.source_id,
       target: edge.destination_id,
-      // label: 'to the',
-      //     type: 'step'
     }))
 
   }, [workflowQuery.data])
@@ -56,8 +58,8 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
       </div>
       <div className="h-[calc(100vh-8rem)]">
         <ReactFlowPlayground flowProps={{
-          nodes,
-          edges
+          defaultNodes: nodes,
+          defaultEdges: edges,
         }} />
       </div>
     </React.Fragment>

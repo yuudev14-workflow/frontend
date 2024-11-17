@@ -2,7 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+@import '../components/react-flow/react-flow-custom-style.css';
+
 @layer base {
+
+  h1 {
+    @apply text-2xl leading-6;
+  }
+  h2 {
+    @apply text-xl leading-6;
+  }
+  h3 {
+    @apply text-lg leading-6;
+  }
+
+  p {
+    @apply text-base leading-6
+  }
   :root {
     --background: 0 0% 100%;
     --foreground: 240 3.7% 15.88%;
@@ -101,3 +117,4 @@
     @apply bg-background text-foreground;
   }
 }
+

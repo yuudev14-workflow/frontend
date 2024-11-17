@@ -32,13 +32,13 @@ const layout = ({
                 className="flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               >
                 <div className="flex w-full items-center gap-2">
-                  <span className="font-medium">{workflow.name}</span>
-                  <span className="ml-auto text-xs">active</span>
+                  <p className="font-medium text-lg">{workflow.name}</p>
+                  <p className="ml-auto text-xs">active</p>
                 </div>
 
-                <span className="line-clamp-2 w-full whitespace-break-spaces text-xs">
+                <p className="line-clamp-2 w-full whitespace-break-spaces">
                   {workflow.description}
-                </span>
+                </p>
               </Link>
             ))}
           </ul>
