@@ -20,6 +20,7 @@ import { Label } from '@/components/ui/label'
 import { Tasks } from '@/services/worfklows/workflows.schema'
 import { PlaybookTaskNode } from '@/components/react-flow/schema'
 import { Workflow } from 'lucide-react'
+import lib from '@/lib'
 
 
 
@@ -73,10 +74,18 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
     const keysToRender = [
       "config", "connector_name", "operation", "created_at", "updated_at"
     ]
-    return keysToRender.map((value) => ({
-      label: value.replace("_", " "),
-      value: currentNode[value as keyof Tasks]
-    })).filter(val => val.value)
+    return keysToRender.map((value) => {
+      if (["created_at", "updated_at"].includes(value)) {
+        return {
+          label: value.replace(/_/g, " "),
+          value: lib.utils.readableDate(currentNode[value as keyof Tasks] as string)
+        }
+      }
+      return {
+        label: value.replace("_", " "),
+        value: currentNode[value as keyof Tasks]
+      }
+    }).filter(val => val.value)
 
   }, [currentNode])
 
