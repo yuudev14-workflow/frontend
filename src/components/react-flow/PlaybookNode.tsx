@@ -2,8 +2,9 @@ import { useCallback } from 'react';
 import { Handle, Node, NodeProps, NodeResizer, Position } from '@xyflow/react';
 import { Workflow } from 'lucide-react';
 import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Tasks } from '@/services/worfklows/workflows.schema';
 
-type NodeComponentProps = Node<{ label: string }, 'string'>
+type NodeComponentProps = Node<Tasks>
 
 const PlaybookNode: React.FC<NodeProps<NodeComponentProps>> = (props) => {
   const onChange = useCallback((evt: any) => {
@@ -24,7 +25,7 @@ const PlaybookNode: React.FC<NodeProps<NodeComponentProps>> = (props) => {
           <AvatarFallback><Workflow className='size-6 text-primary' /></AvatarFallback>
         </Avatar>
         <div className='flex-1 mr-9'>
-          <p className='font-medium'>{props.data.label}</p>
+          <p className='font-medium'>{props.data.name}</p>
           <p>Operation</p>
         </div>
       </div>

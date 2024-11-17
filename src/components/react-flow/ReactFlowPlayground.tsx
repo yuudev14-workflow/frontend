@@ -8,9 +8,9 @@ const nodeTypes = {
   playbookNodes: PlaybookNode
 }
 
-const ReactFlowPlayground: React.FC<{
-  flowProps: ReactFlowProps<Node, Edge>
-}> = ({ flowProps }) => {
+const ReactFlowPlayground = <T extends Record<string, any>>({ flowProps }: {
+  flowProps: ReactFlowProps<Node<T>, Edge>
+}) => {
   const { theme } = useTheme()
 
   const reactFlowTheme = useMemo(() => {
@@ -22,6 +22,7 @@ const ReactFlowPlayground: React.FC<{
       <ReactFlow
         colorMode={reactFlowTheme}
         nodeTypes={nodeTypes}
+        zoomOnDoubleClick={false}
 
         {...flowProps}
 

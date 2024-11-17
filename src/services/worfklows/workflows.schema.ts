@@ -13,7 +13,7 @@ export type WorkflowFilterPayload = Partial<
   Pick<Workflow, "name" | "trigger_type">
 >;
 
-export interface Tasks {
+export type Tasks = {
   id: string;
   workflow_id: string;
   name: string;
