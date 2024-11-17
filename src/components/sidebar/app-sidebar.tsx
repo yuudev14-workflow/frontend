@@ -21,7 +21,7 @@ const navData = {
   user: {
     name: "shadcn",
     email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "",
   },
   navMain: [
     {
@@ -53,9 +53,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <Link href={"/"}>
-        Workflow
+          Workflow
         </Link>
- 
+
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navData.navMain} />

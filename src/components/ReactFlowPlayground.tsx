@@ -1,15 +1,17 @@
-import { ReactFlow, Controls, Background } from '@xyflow/react';
+import { ReactFlow, Controls, Background, ReactFlowProps, Node, Edge } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
- 
-function ReactFlowPlayground() {
+
+const ReactFlowPlayground: React.FC<{
+  flowProps: ReactFlowProps<Node, Edge>
+}> = ({ flowProps }) => {
   return (
     <div className='h-full w-full'>
-      <ReactFlow>
+      <ReactFlow {...flowProps}>
         <Background />
         <Controls />
       </ReactFlow>
     </div>
   );
 }
- 
+
 export default ReactFlowPlayground
