@@ -22,6 +22,15 @@ import { PlaybookTaskNode } from '@/components/react-flow/schema'
 import { Workflow } from 'lucide-react'
 import lib from '@/lib'
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { Input } from '@/components/ui/input'
+
+
 
 
 const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }) => {
@@ -72,7 +81,7 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
       return []
     }
     const keysToRender = [
-      "config", "connector_name", "operation", "created_at", "updated_at"
+      "connector_name", "operation", "created_at", "updated_at"
     ]
     return keysToRender.map((value) => {
       if (["created_at", "updated_at"].includes(value)) {
@@ -134,10 +143,22 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
                 <RenderKeyValue label={val.label} value={val.value as string} key={val.label} />
               ))}
 
-              <div className='flex flex-col gap-4'>
-                <Label>Parameters</Label>
-                <p className="bg-secondary px-3 py-1 rounded">asas</p>
-              </div>
+              <Accordion type="multiple" className="w-full">
+              <AccordionItem value="config">
+                  <AccordionTrigger>Config</AccordionTrigger>
+                  <AccordionContent>
+                    <Input disabled />
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="parameters">
+                  <AccordionTrigger>Parameters</AccordionTrigger>
+                  <AccordionContent>
+                    Yes. It adheres to the WAI-ARIA design pattern.
+                  </AccordionContent>
+                </AccordionItem>
+
+              </Accordion>
+
 
             </div>
             <SheetFooter>
