@@ -121,7 +121,11 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
         <Sheet open={isOpenPlaybookInfo} onOpenChange={setIsOpenPlaybookInfo}>
           <SheetContent side="right" className='min-w-[600px] flex flex-col'>
             <SheetHeader>
-              <SheetTitle className='flex gap-2 text-2xl'>{currentNode.name}</SheetTitle>
+
+              <SheetTitle className='flex flex-col text-2xl'>
+                <span className='text-xs text-muted-foreground'>Step Name</span>
+                {currentNode.name}
+              </SheetTitle>
               <SheetDescription>{currentNode.description}</SheetDescription>
             </SheetHeader>
             <div className="flex flex-1 flex-col gap-7">
