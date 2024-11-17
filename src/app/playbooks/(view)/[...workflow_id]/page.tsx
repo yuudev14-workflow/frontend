@@ -18,6 +18,10 @@ import { Node } from '@xyflow/react'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Label } from '@/components/ui/label'
 import { Tasks } from '@/services/worfklows/workflows.schema'
+import { PlaybookTaskNode } from '@/components/react-flow/schema'
+import { Workflow } from 'lucide-react'
+
+
 
 const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }) => {
   const { workflow_id: workflowId } = React.use(params)
@@ -36,12 +40,12 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
 
 
 
-  const nodes: Node<Tasks | { label: string }>[] = useMemo(() => {
+  const nodes: Node<PlaybookTaskNode>[] = useMemo(() => {
     if (workflowQuery.data === undefined || !Array.isArray(workflowQuery.data.tasks)) return []
     return workflowQuery.data.tasks.map((task) => {
-      const data: Node<Tasks | { label: string }> = {
+      const data: Node<PlaybookTaskNode> = {
         id: task.id,
-        data: task.name === "start" ? { label: "start" } : task,
+        data: task.name === "start" ? { label: "start", ...task } : task,
         position: { x: task.x, y: task.y },
         type: task.name === "start" ? "input" : "playbookNodes",
         // className: "nospan"
@@ -62,6 +66,20 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
 
   }, [workflowQuery.data])
 
+  const valuesToRender = useMemo(() => {
+    if (currentNode === null) {
+      return []
+    }
+    const keysToRender = [
+      "config", "connector_name", "operation", "created_at", "updated_at"
+    ]
+    return keysToRender.map((value) => ({
+      label: value.replace("_", " "),
+      value: currentNode[value as keyof Tasks]
+    })).filter(val => val.value)
+
+  }, [currentNode])
+
 
   if (workflowQuery.data === undefined) {
     return
@@ -74,49 +92,62 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
         <div className="flex gap-2">
           <Button>Trigger</Button>
           <Button>Delete</Button>
-          <Sheet open={isOpenPlaybookInfo} onOpenChange={setIsOpenPlaybookInfo}>
-            <SheetContent side="right" className='min-w-[600px]'>
-              <SheetHeader>
-                <SheetTitle>Edit profile</SheetTitle>
-                <SheetDescription>
-                  Make changes to your profile here. Click save when you're done.
-                </SheetDescription>
-              </SheetHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">
-                    Name
-                  </Label>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="username" className="text-right">
-                    Username
-                  </Label>
-                </div>
-              </div>
-              <SheetFooter>
-                <SheetClose asChild>
-                  <Button type="submit">Save changes</Button>
-                </SheetClose>
-              </SheetFooter>
-            </SheetContent>
-          </Sheet>
+
         </div>
       </div>
       <div className="h-[calc(100vh-8rem)]">
-        <ReactFlowPlayground<Tasks | { label: string }>
+        <ReactFlowPlayground<PlaybookTaskNode>
           flowProps={{
             defaultNodes: nodes,
             defaultEdges: edges,
             nodesDraggable: false,
             onNodeDoubleClick: (_, node) => {
-              setCurrentNode(node.data as Tasks)
+              console.log(node)
+              setCurrentNode(node.data)
               setIsOpenPlaybookInfo(true)
             }
           }} />
       </div>
+      {currentNode && (
+        <Sheet open={isOpenPlaybookInfo} onOpenChange={setIsOpenPlaybookInfo}>
+          <SheetContent side="right" className='min-w-[600px] flex flex-col'>
+            <SheetHeader>
+              <SheetTitle className='flex gap-2 text-2xl'>{currentNode.name}</SheetTitle>
+              <SheetDescription>{currentNode.description}</SheetDescription>
+            </SheetHeader>
+            <div className="flex flex-1 flex-col gap-7">
+
+              {valuesToRender.map(val => (
+                <RenderKeyValue label={val.label} value={val.value as string} key={val.label} />
+              ))}
+
+              <div className='flex flex-col gap-4'>
+                <Label>Parameters</Label>
+                <p className="bg-secondary px-3 py-1 rounded">asas</p>
+              </div>
+
+            </div>
+            <SheetFooter>
+              <SheetClose asChild>
+                <Button type="submit">Close</Button>
+              </SheetClose>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
+      )}
+
 
     </React.Fragment>
+  )
+}
+
+const RenderKeyValue: React.FC<{ label: string, value: string }> = ({ label, value }) => {
+  return (
+    <div className='flex items-center justify-between'>
+      <Label className='capitalize'>{label}</Label>
+      <p className="bg-secondary px-3 py-1 rounded">{value}</p>
+    </div>
+
   )
 }
 

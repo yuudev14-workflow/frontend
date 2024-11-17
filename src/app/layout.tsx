@@ -8,7 +8,7 @@ import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import Header from "@/components/header/header";
 
 import dynamic from 'next/dynamic'
-const Providers = dynamic(() => import("../components/provider/main-provider"), {ssr: false})
+const Providers = dynamic(() => import("../components/provider/main-provider"), { ssr: false })
 
 
 const geistSans = localFont({
@@ -29,7 +29,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log("hi")
   return (
     <html lang="en">
       <body

@@ -21,7 +21,7 @@ const layout = ({
   }
   return (
     <div className="flex">
-      <div className="md:flex w-[350px] border-r bg-sidebar h-[calc(100vh-4rem)] overflow-auto">
+      <div className="md:flex w-[350px] border-r bg-white dark:bg-sidebar h-[calc(100vh-4rem)] overflow-auto">
 
         <div className="px-0 w-full">
           <ul>
