@@ -29,6 +29,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  console.log("hi")
   return (
     <html lang="en">
       <body
@@ -39,7 +40,7 @@ export default function RootLayout({
             <AppSidebar />
             <SidebarInset>
               <Header />
-              <div className="flex-1">
+              <div className="flex-1 mt-16">
                 {children}
               </div>
 

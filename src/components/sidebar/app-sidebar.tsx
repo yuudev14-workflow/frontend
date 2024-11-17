@@ -15,6 +15,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import ModeToggle from "./toggle-dark-theme"
+import Link from "next/link"
 
 const navData = {
   user: {
@@ -31,7 +32,7 @@ const navData = {
       items: [
         {
           title: "Playbooks",
-          url: "#",
+          url: "/playbooks",
         },
         {
           title: "Scheduler",
@@ -51,9 +52,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <h1 className="px-2">
-          Workflow
-        </h1>
+        <Link href={"/"}>
+        Workflow
+        </Link>
+ 
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navData.navMain} />
