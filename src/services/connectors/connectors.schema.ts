@@ -1,4 +1,4 @@
-interface Query {
+interface ConnectorInfo {
   name: string;
   configuration: Configuration;
   operations: Operation[];
