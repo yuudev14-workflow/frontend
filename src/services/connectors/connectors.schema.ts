@@ -16,7 +16,7 @@ interface Field {
   required: boolean;
   editable: boolean;
   visible: boolean;
-  value?: string; 
+  value?: any; 
   tooltip?: string; 
 }
 
