@@ -11,7 +11,6 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet"
 import { useQuery } from '@tanstack/react-query'
 import { Node } from '@xyflow/react'
@@ -19,7 +18,6 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Label } from '@/components/ui/label'
 import { Tasks } from '@/services/worfklows/workflows.schema'
 import { PlaybookTaskNode } from '@/components/react-flow/schema'
-import { Workflow } from 'lucide-react'
 import lib from '@/lib'
 
 import {
@@ -29,6 +27,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Input } from '@/components/ui/input'
+import Link from 'next/link'
 
 
 
@@ -36,7 +35,9 @@ import { Input } from '@/components/ui/input'
 const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }) => {
   const { workflow_id: workflowId } = React.use(params)
   const [isOpenPlaybookInfo, setIsOpenPlaybookInfo] = useState<boolean>(false)
-  const [currentNode, setCurrentNode] = useState<Tasks | null>(null)
+  const [currentNode, setCurrentNode] = useState<Tasks | null | Partial<Tasks> & {
+    label?: string
+  }>(null)
 
   const workflowQuery = useQuery({
     queryKey: ['workflow-' + workflowId], queryFn: async () => {
@@ -58,7 +59,6 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
         data: task.name === "start" ? { label: "start", ...task } : task,
         position: { x: task.x, y: task.y },
         type: task.name === "start" ? "input" : "playbookNodes",
-        // className: "nospan"
       }
       return data
     })
@@ -171,7 +171,7 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
                       </Label>
                       <Input disabled value="asas" />
                     </div>
-                    
+
 
                   </AccordionContent>
                 </AccordionItem>
@@ -181,7 +181,6 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
 
             </div>
             <SheetFooter>
-              <Button type="button">Edit</Button>
               <SheetClose asChild>
                 <Button type="button">Close</Button>
               </SheetClose>
