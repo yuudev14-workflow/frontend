@@ -144,16 +144,35 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
               ))}
 
               <Accordion type="multiple" className="w-full">
-              <AccordionItem value="config">
+                <AccordionItem value="config">
                   <AccordionTrigger>Config</AccordionTrigger>
                   <AccordionContent>
-                    <Input disabled />
+                    <Input disabled value="asas" />
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="parameters">
                   <AccordionTrigger>Parameters</AccordionTrigger>
-                  <AccordionContent>
-                    Yes. It adheres to the WAI-ARIA design pattern.
+                  <AccordionContent className='flex flex-col gap-4'>
+                    <div className='flex flex-col gap-2'>
+                      <Label className="font-normal">
+                        Parameter 1
+                      </Label>
+                      <Input disabled value="asas" />
+                    </div>
+                    <div className='flex flex-col gap-2'>
+                      <Label className="font-normal">
+                        Parameter 1
+                      </Label>
+                      <Input disabled value="asas" />
+                    </div>
+                    <div className='flex flex-col gap-2'>
+                      <Label className="font-normal">
+                        Parameter 1
+                      </Label>
+                      <Input disabled value="asas" />
+                    </div>
+                    
+
                   </AccordionContent>
                 </AccordionItem>
 
@@ -162,9 +181,11 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
 
             </div>
             <SheetFooter>
+              <Button type="button">Edit</Button>
               <SheetClose asChild>
-                <Button type="submit">Close</Button>
+                <Button type="button">Close</Button>
               </SheetClose>
+
             </SheetFooter>
           </SheetContent>
         </Sheet>
