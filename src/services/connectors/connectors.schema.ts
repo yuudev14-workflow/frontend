@@ -1,14 +1,14 @@
-interface ConnectorInfo {
+export interface ConnectorInfo {
   name: string;
   configuration: Configuration;
   operations: Operation[];
 }
 
-interface Configuration {
+export interface Configuration {
   fields: Field[];
 }
 
-interface Field {
+export interface Field {
   title: string;
   description: string;
   type: 'text' | 'password' | 'checkbox'; 
@@ -20,7 +20,7 @@ interface Field {
   tooltip?: string; 
 }
 
-interface Operation {
+export interface Operation {
   operation: string;
   title: string;
   description: string;
@@ -29,7 +29,7 @@ interface Operation {
   parameters: Parameter[];
 }
 
-interface Parameter {
+export interface Parameter {
   title: string;
   description: string;
   required: boolean;
