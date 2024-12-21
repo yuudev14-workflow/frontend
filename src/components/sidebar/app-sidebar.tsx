@@ -31,8 +31,8 @@ const navData = {
       isActive: true,
       items: [
         {
-          title: "Playbooks",
-          url: "/playbooks",
+          title: "Workflows",
+          url: "/workflows",
         },
         {
           title: "Scheduler",

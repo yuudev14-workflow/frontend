@@ -6,8 +6,8 @@ import ReactFlowPlayground from '@/components/react-flow/ReactFlowPlayground'
 import { PlaybookTaskNode } from '@/components/react-flow/schema'
 
 import { Button } from '@/components/ui/button'
-import ConnectorOperation from '../_components/ConnectorOperation'
-import SelectWorkflowTrigger from '../_components/SelectWorkflowTrigger'
+import ConnectorOperation from '../../_components/ConnectorOperation'
+import SelectWorkflowTrigger from '../../_components/SelectWorkflowTrigger'
 
 
 const Page = () => {

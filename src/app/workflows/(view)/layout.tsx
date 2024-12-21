@@ -27,7 +27,7 @@ const layout = ({
           <ul>
             {workflowQuery.data.entries.map((workflow) => (
               <Link
-                href={"/playbooks/" + workflow.id}
+                href={"/workflows/" + workflow.id}
                 key={`playbook-${workflow.id}`}
                 className="flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               >
