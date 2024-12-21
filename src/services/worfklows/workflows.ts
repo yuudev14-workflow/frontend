@@ -1,6 +1,7 @@
 import settings from "@/settings";
 import { EnrtyResponse } from "../common/schema";
 import {
+  CreateWorkflowPayload,
   Workflow,
   WorkflowFilterPayload,
 } from "./workflows.schema";
@@ -52,4 +53,19 @@ export default class WorkflowService {
     );
     return res.data;
   };
+
+  /**
+   * create worflow api
+   * @param payload 
+   * @returns 
+   */
+  public static createWorkflow = async(
+    payload: CreateWorkflowPayload
+  ): Promise<Workflow> => {
+    const res = await apiClient.post(
+      this.BASE_URL + "/api/v1/workflows",
+      payload
+    );
+    return res.data;
+  }
 }

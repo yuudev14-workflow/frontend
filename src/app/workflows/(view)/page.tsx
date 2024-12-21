@@ -26,6 +26,11 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import WorkflowService from "@/services/worfklows/workflows";
+import { CreateWorkflowPayload } from "@/services/worfklows/workflows.schema";
+import { toast } from "@/hooks/use-toast";
+import { queryClient } from "@/components/provider/main-provider";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -47,22 +52,40 @@ export default function Page() {
     },
   })
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
-    router.push("/workflows/update/123123")
+  const mutation = useMutation({
+    mutationFn: (workflow: CreateWorkflowPayload) => {
+      return WorkflowService.createWorkflow(workflow)
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "succesfully added a workflow",
+        description: "redirecting you to the playground",
+      })
+      router.push(`/workflows/update/${data.id}`)
+      queryClient.removeQueries({
+        "queryKey": ['workflow-lists']
+      })
+    },
+    onError(error) {
+      toast({
+        title: "Error when adding a new workflow",
+        description: error.message,
+      })
+    },
+  })
+
+  function onSubmit(data: z.infer<typeof formSchema>) {
+    mutation.mutate(data)
   }
   return (
     <div>
       <div className="py-3 px-5 flex justify-between items-center h-16">
         <div className="flex gap-2 ml-auto">
           <Dialog>
-            <DialogTrigger>Create Playbook</DialogTrigger>
+            <DialogTrigger>Create Workflow</DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Add a new playbook</DialogTitle>
+                <DialogTitle>Add a new workflow</DialogTitle>
                 <DialogDescription>
 
                 </DialogDescription>

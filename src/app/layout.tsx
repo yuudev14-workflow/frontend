@@ -8,6 +8,7 @@ import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import Header from "@/components/header/header";
 
 import dynamic from 'next/dynamic'
+import { Toaster } from "@/components/ui/toaster";
 const Providers = dynamic(() => import("../components/provider/main-provider"), { ssr: false })
 
 
@@ -47,6 +48,7 @@ export default function RootLayout({
 
           </SidebarProvider>
         </Providers>
+        <Toaster />
 
       </body>
     </html>

@@ -9,6 +9,10 @@ export interface Workflow {
   edges?: Edges[];
 }
 
+export type CreateWorkflowPayload = Partial<
+  Pick<Workflow, "name" | "description">
+>;
+
 export type WorkflowFilterPayload = Partial<
   Pick<Workflow, "name" | "trigger_type">
 >;
@@ -26,7 +30,7 @@ export type Tasks = {
   operation: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 export interface Edges {
   id: string;
