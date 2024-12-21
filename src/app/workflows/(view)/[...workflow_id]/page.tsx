@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/accordion"
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
+import CreateWorkflowForm from '../../_components/CreateWorkflowForm'
 
 
 
@@ -110,6 +111,10 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
         <div className="flex gap-2">
           <Button>Trigger</Button>
           <Button>Delete</Button>
+          <Link href={`/workflows/update/${workflowId}`}>
+            <Button>Update</Button>
+          </Link>
+          <CreateWorkflowForm />
 
         </div>
       </div>

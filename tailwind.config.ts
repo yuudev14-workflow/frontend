@@ -28,6 +28,18 @@ const config: Config = {
   				DEFAULT: 'hsl(var(--secondary))',
   				foreground: 'hsl(var(--secondary-foreground))'
   			},
+				tertiary: {
+  				DEFAULT: 'hsl(var(--tertiary))',
+  				foreground: 'hsl(var(--tertiary-foreground))'
+  			},
+				quaternary: {
+  				DEFAULT: 'hsl(var(--quaternary))',
+  				foreground: 'hsl(var(--quaternary-foreground))'
+  			},
+				quinary: {
+  				DEFAULT: 'hsl(var(--quinary))',
+  				foreground: 'hsl(var(--quinary-foreground))'
+  			},
   			muted: {
   				DEFAULT: 'hsl(var(--muted))',
   				foreground: 'hsl(var(--muted-foreground))'
