@@ -5,8 +5,8 @@ export interface Workflow {
   trigger_type: string;
   created_at: string;
   updated_at: string;
-  tasks?: Tasks[];
-  edges?: Edges[];
+  tasks?: Tasks[] | null;
+  edges?: Edges[] | null;
 }
 
 export type CreateWorkflowPayload = Partial<
