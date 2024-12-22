@@ -51,7 +51,8 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
     <div className='relative h-full'>
       <div className='absolute flex flex-col max-w-[500px] w-full bg-background border-r border-r-border h-full top-0 left-0 z-50'>
         {/* <SelectWorkflowTrigger /> */}
-        <SelectTaskOptions />
+        <ConnectorOperation />
+        {/* <SelectTaskOptions /> */}
       </div>
       <div className="py-3 px-5 flex justify-between items-center h-16">
         <p className="font-medium text-xl">Name</p>
