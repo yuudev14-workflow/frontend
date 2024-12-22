@@ -141,6 +141,11 @@ const connectorInfo: ConnectorInfo = {
 
 const ConnectorOperation = () => {
   const [currentOperation, setCurrentOperation] = useState<Operation | null>(null)
+
+  const onChangeOperationHandler = (value: string) => {
+    const filterOperation = connectorInfo.operations.filter(operation => value === operation.annotation)
+    setCurrentOperation(filterOperation[0] ?? null)
+  }
   return (
     <>
       <div className='flex-1 flex flex-col gap-3 p-3'>
@@ -178,10 +183,7 @@ const ConnectorOperation = () => {
             <Label className="font-normal">
               Operation
             </Label>
-            <Select onValueChange={(value) => {
-              const filterOperation = connectorInfo.operations.filter(operation => value === operation.annotation)
-              setCurrentOperation(filterOperation[0] ?? null)
-            }}>
+            <Select onValueChange={onChangeOperationHandler}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Operation" />
               </SelectTrigger>
@@ -205,24 +207,21 @@ const ConnectorOperation = () => {
                     <Label className="font-normal">
                       {param.title}
                     </Label>
-                    <Input placeholder={param.placeholder} />
+                    {param.type === "text" && (
+                      <Input placeholder={param.placeholder} />
+                    )}
+
                   </div>
                 ))}
-
               </div>
-
             </div>
           )}
-
-
-
         </div>
       </div>
       <footer className='mt-auto border-t border-border border p-3'>
-        <div className="flex gap-2">
-          <Button>Trigger</Button>
-          <Button>Delete</Button>
-
+        <div className="flex justify-end gap-2">
+          <Button>Close</Button>
+          <Button>Save</Button>
         </div>
       </footer>
 
