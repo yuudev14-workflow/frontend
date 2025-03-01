@@ -8,17 +8,19 @@ const OptionButton: React.FC<{
   iconClass?: string,
   iconBgColor?: string,
   iconTextColor?: string,
-  children: React.ReactNode
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
+  children: React.ReactNode,
 }> = ({
   Icon,
   buttonClass,
   iconClass,
   iconBgColor,
   iconTextColor,
+  onClick,
   children
 }) => {
     return (
-      <button className={cn('flex gap-4 p-2 bg-muted text-left hover:bg-accent', buttonClass)}>
+      <button className={cn('flex gap-4 p-2 bg-muted text-left hover:bg-accent', buttonClass)} onClick={onClick}>
         <div className={cn('aspect-square p-3 bg-primary text-primary-foreground', iconClass)} style={iconBgColor ? {
           backgroundColor: iconBgColor
         } : undefined}>

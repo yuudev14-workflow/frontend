@@ -10,11 +10,24 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Cable, CircleCheckBig, Code, Info, Network, PencilLineIcon, Timer, Wrench } from 'lucide-react'
+import { Cable, CircleCheckBig, Code, Info, LucideProps, Network, PencilLineIcon, Timer, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { TaskOperationType } from './WorkflowOperations'
 
+type OperationOption = {
+  label: string;
+  tooltip: React.ReactNode;
+  Icon:  React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
+  operation: Exclude<TaskOperationType, null>;
+};
 
-const TASK_OPERATIONS = [
+type TaskOperationGroup = {
+  label: string;
+  iconClass?: string;
+  options: OperationOption[];
+};
+
+const TASK_OPERATIONS: readonly TaskOperationGroup[] = [
   {
     label: "Execute",
     options: [
@@ -22,16 +35,19 @@ const TASK_OPERATIONS = [
         label: "Connector",
         tooltip: <p>Add to library</p>,
         Icon: Cable,
+        operation: "connector"
       },
       {
         label: "Utility",
         tooltip: <p>Add to library</p>,
-        Icon: Wrench
+        Icon: Wrench,
+        operation: "utility"
       },
       {
         label: "Code",
         tooltip: <p>Add to library</p>,
-        Icon: Code
+        Icon: Code,
+        operation: "code"
       },
     ]
   },
@@ -40,30 +56,36 @@ const TASK_OPERATIONS = [
     iconClass: 'bg-quaternary text-quaternary-foreground',
     options: [
       {
-        label: "Network",
+        label: "Decision",
         tooltip: <p>Add to library</p>,
         Icon: Network,
+        operation: "decision"
       },
       {
         label: "Wait",
         tooltip: <p>Add to library</p>,
-        Icon: Timer
+        Icon: Timer,
+        operation: "wait"
       },
       {
         label: "Approval",
         tooltip: <p>Add to library</p>,
-        Icon: CircleCheckBig
+        Icon: CircleCheckBig,
+        operation: "approval"
       },
       {
         label: "Input Prompt",
         tooltip: <p>Add to library</p>,
-        Icon: PencilLineIcon
+        Icon: PencilLineIcon,
+        operation: "input_prompt"
       },
     ]
   },
-]
+] as const
 
-const SelectTaskOptions = () => {
+const SelectTaskOptions: React.FC<{
+  setTaskOperation: React.Dispatch<React.SetStateAction<TaskOperationType>>
+}> = ({ setTaskOperation }) => {
   return (
     <div className='flex flex-col gap-3 h-full pt-5'>
       <div className='px-3 flex justify-between items-center'>
@@ -84,7 +106,13 @@ const SelectTaskOptions = () => {
             <Separator />
             <div className="flex flex-col gap-3">
               {operation.options.map(option => (
-                <OptionButton key={`select-task-option-${option.label}`} Icon={option.Icon} iconClass={operation.iconClass} buttonClass='h-[64px]'>
+                <OptionButton
+                  key={`select-task-option-${option.label}`}
+                  Icon={option.Icon}
+                  iconClass={operation.iconClass}
+                  buttonClass='h-[64px]'
+                  onClick={() => setTaskOperation(option.operation)}
+                >
                   <div className='flex-1 flex gap-2 items-center h-full'>
                     <Label className='capitalize text'>{option.label}</Label>
                     <TooltipProvider>

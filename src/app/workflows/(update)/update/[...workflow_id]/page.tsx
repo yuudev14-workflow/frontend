@@ -5,17 +5,17 @@ import React, { useMemo } from 'react'
 import ReactFlowPlayground from '@/components/react-flow/ReactFlowPlayground'
 import { PlaybookTaskNode } from '@/components/react-flow/schema'
 import { Node } from '@xyflow/react'
-import { Button } from '@/components/ui/button'
-import ConnectorOperation from '../../_components/ConnectorOperation'
-import SelectWorkflowTrigger from '../../_components/SelectWorkflowTrigger'
+
 import { useQuery } from '@tanstack/react-query'
 import WorkflowService from '@/services/worfklows/workflows'
-import SelectTaskOptions from '../../_components/SelectTaskOptions'
+import WorkflowOperations from '../../_components/WorkflowOperations'
+import { Button } from '@/components/ui/button'
+
+
 
 
 const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }) => {
   const { workflow_id: workflowId } = React.use(params)
-
 
   const workflowQuery = useQuery({
     queryKey: ['workflow-' + workflowId, workflowId], queryFn: async () => {
@@ -47,22 +47,19 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
     }))
 
   }, [workflowQuery.data])
+
+
+
   return (
     <div className='relative h-full'>
-      <div className='absolute flex flex-col max-w-[500px] w-full bg-background border-r border-r-border h-full top-0 left-0 z-50'>
-        {/* <SelectWorkflowTrigger /> */}
-        <ConnectorOperation />
-        {/* <SelectTaskOptions /> */}
-      </div>
+      <WorkflowOperations workflowQuery={workflowQuery} />
       <div className="py-3 px-5 flex justify-between items-center h-16">
         <p className="font-medium text-xl">Name</p>
         <div className="flex gap-2">
           <Button>Trigger</Button>
           <Button>Delete</Button>
-
         </div>
       </div>
-
       <div className="h-[calc(100vh-8rem)]">
         <ReactFlowPlayground<PlaybookTaskNode>
           flowProps={{
