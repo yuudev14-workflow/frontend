@@ -77,55 +77,56 @@ const CreateWorkflowForm = () => {
   }
   return (
     <Dialog>
-            <DialogTrigger>Create Workflow</DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add a new workflow</DialogTitle>
-                <DialogDescription>
+      <DialogTrigger>Create Workflow</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add a new workflow</DialogTitle>
+          <DialogDescription>
 
-                </DialogDescription>
-              </DialogHeader>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Automate Email.., etc." {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Name of the workflow
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Automate Email.., etc." {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Name of the workflow
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
 
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <Textarea {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Description of the workflow
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit">Submit</Button>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Description of the workflow
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" disabled={mutation.isPending} showLoader={mutation.isPending}>
+              Submit</Button>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   )
 }
 
