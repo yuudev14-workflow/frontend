@@ -17,7 +17,7 @@ import { TaskOperationType } from './WorkflowOperations'
 type OperationOption = {
   label: string;
   tooltip: React.ReactNode;
-  Icon:  React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
+  Icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
   operation: Exclude<TaskOperationType, null>;
 };
 
@@ -92,9 +92,6 @@ const SelectTaskOptions: React.FC<{
         <Label className="uppercase text-lg">
           Select Task Operation
         </Label>
-        <Button>
-          Close
-        </Button>
       </div>
 
       <div className='flex-1 overflow-auto px-3 pb-5'>
@@ -117,7 +114,7 @@ const SelectTaskOptions: React.FC<{
                     <Label className='capitalize text'>{option.label}</Label>
                     <TooltipProvider>
                       <Tooltip>
-                        <TooltipTrigger><Info size={14} /></TooltipTrigger>
+                        <TooltipTrigger asChild><Info size={14} /></TooltipTrigger>
                         <TooltipContent>
                           {option.tooltip}
                         </TooltipContent>

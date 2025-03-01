@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button"
 import SelectWorkflowTrigger from "./SelectWorkflowTrigger"
 import SelectTaskOptions from "./SelectTaskOptions"
 import ConnectorList from "./ConnectorList"
-import { MoveLeft } from "lucide-react"
+import { MoveLeft, X } from "lucide-react"
 
 export type TaskOperationType = "connector" | "utility" | "code" | "decision" | "wait" | "approval" | "input_prompt" | null
 
 const WorkflowOperations: React.FC<{
   workflowQuery: UseQueryResult<Workflow, Error>
-}> = ({ workflowQuery }) => {
+  setOperationSidebar: React.Dispatch<React.SetStateAction<boolean>>
+}> = ({ workflowQuery, setOperationSidebar }) => {
   const [taskOperation, setTaskOperation] = useState<TaskOperationType>(null) // this is to show what operation we need to show in the container
 
   /**
@@ -33,6 +34,9 @@ const WorkflowOperations: React.FC<{
   return (
 
     <div className='absolute flex flex-col max-w-[500px] w-full bg-background border-r border-r-border h-full top-0 left-0 z-50'>
+      <button className="absolute top-5 right-5" onClick={() => setOperationSidebar(false)}>
+        <X size={16} />
+      </button>
       {!hasTriggerStep ? (
         <SelectWorkflowTrigger />
       ) : taskOperation === null ? (
