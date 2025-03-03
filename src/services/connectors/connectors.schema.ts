@@ -1,5 +1,6 @@
 export interface ConnectorInfo {
   name: string;
+  id: string;
   configuration: Configuration;
   operations: Operation[];
 }

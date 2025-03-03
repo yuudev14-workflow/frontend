@@ -16,6 +16,7 @@ import { ConnectorInfo, Operation } from '@/services/connectors/connectors.schem
 
 const connectorInfo: ConnectorInfo = {
   "name": "",
+  "id": "",
   "configuration": {
     "fields": [
       {
