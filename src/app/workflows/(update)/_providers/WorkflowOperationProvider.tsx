@@ -1,5 +1,5 @@
-import React, { createContext, useEffect, useMemo, useState } from 'react';
-import { Edge, Node, OnNodesChange, useNodesState } from '@xyflow/react'
+import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import { addEdge, Connection, Edge, FinalConnectionState, Node, OnEdgesChange, OnNodesChange, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react'
 import { PlaybookTaskNode } from '@/components/react-flow/schema';
 import { UseQueryResult } from '@tanstack/react-query';
 import { Edges, Tasks, Workflow, WorkflowDataToUpdate } from '@/services/worfklows/workflows.schema';
@@ -16,7 +16,10 @@ export type WorkflowOperationType = {
   onNodesChange: OnNodesChange<Node<PlaybookTaskNode>>
   edges: Edge[]
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>>
+  onEdgesChange: OnEdgesChange<Edge>
   hasTriggerStep: boolean
+  onConnect: (params: Connection) => void
+  onConnectEnd: (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => void
 }
 
 export const WorkflowOperationContext = createContext<WorkflowOperationType>({
@@ -31,7 +34,10 @@ export const WorkflowOperationContext = createContext<WorkflowOperationType>({
   onNodesChange: () => { },
   edges: [],
   setEdges: () => { },
-  hasTriggerStep: false
+  onEdgesChange: () => { },
+  hasTriggerStep: false,
+  onConnect: (params: Connection) => { },
+  onConnectEnd: (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => { }
 });
 
 const INITIAL_START_NODE_VALUE = {
@@ -42,7 +48,7 @@ const INITIAL_START_NODE_VALUE = {
     }
   },
   position: { x: 100, y: 100 },
-  type: "playbookNodes",
+  type: "start",
   dragHandle: '.drag-handle__custom',
 }
 
@@ -52,30 +58,37 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
   const [workflowData, setWorkflowData] = useState<WorkflowDataToUpdate>({})
   const [nodes, setNodes, onNodesChange] = useNodesState<Node<PlaybookTaskNode>>([])
   const [currentNode, setCurrentNode] = useState<Node<PlaybookTaskNode> | null>(null)
-  const [edges, setEdges] = useState<Edge[]>([])
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
+  const { screenToFlowPosition } = useReactFlow();
+  let id = 1;
+  const getId = () => `${id++}`;
 
-  const setMappedNodes = (task: Tasks) => {
-    const data: Node<PlaybookTaskNode> = {
-      id: task.id,
-      data: task.name === "start" ? { label: "start", task: task } : { task },
-      position: { x: task.x, y: task.y },
-      type: task.name === "start" ? "input" : "playbookNodes",
-      dragHandle: '.drag-handle__custom',
-    }
-
-    return data
-  }
-
-  const setMappedEdges = (edge: Edges) => ({
-    id: edge.id,
-    source: edge.source_id,
-    target: edge.destination_id,
-  })
 
   useEffect(() => {
-    const _nodes = workflowQuery.data?.tasks?.map(setMappedNodes) ?? [INITIAL_START_NODE_VALUE]
+    const setMappedNodes = (task: Tasks) => {
+      const data: Node<PlaybookTaskNode> = {
+        id: task.id,
+        data: task.name === "start" ? { label: "start", task: task } : { task },
+        position: { x: task.x, y: task.y },
+        type: task.name === "start" ? "input" : "playbookNodes",
+        dragHandle: '.drag-handle__custom',
+      }
+
+      return data
+    }
+
+    const setMappedEdges = (edge: Edges) => ({
+      id: edge.id,
+      source: edge.source_id,
+      target: edge.destination_id,
+    })
+    const _nodes = workflowQuery.data?.tasks?.map(setMappedNodes) ?? []
+    // if task doesnt have a node with a name start, add a start node
+    // also open the sidebar operation to notify the user to select trigger quicjly
     if (_nodes.some(task => task.data.task?.name === "start") == false) {
       _nodes.unshift(INITIAL_START_NODE_VALUE)
+      setCurrentNode(INITIAL_START_NODE_VALUE)
+      setOpenOperationSidebar(true)
     }
     setNodes(_nodes)
     setEdges(workflowQuery.data?.edges?.map(setMappedEdges) ?? [])
@@ -98,6 +111,46 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
     return workflowData.trigger_type != undefined || workflowData.trigger_type != null
 
   }, [workflowData])
+
+  const onConnect = useCallback(
+    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
+    [],
+  );
+  const onConnectEnd = useCallback(
+    (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => {
+      // when a connection is dropped on the pane it's not valid
+      if (!connectionState.isValid) {
+        // we need to remove the wrapper bounds, in order to get the correct position
+        const id = getId();
+        const { clientX, clientY } =
+          'changedTouches' in event ? event.changedTouches[0] : event;
+        const newNode: Node<PlaybookTaskNode> = {
+          id,
+          position: screenToFlowPosition({
+            x: clientX,
+            y: clientY,
+          }),
+          data: {},
+          type: "playbookNodes",
+          dragHandle: '.drag-handle__custom',
+        };
+
+        setNodes((nds) => nds.concat(newNode));
+        setCurrentNode(newNode)
+
+        setEdges((eds) =>
+          eds.concat({ id, source: connectionState.fromNode!.id, target: id }),
+        );
+
+        setOpenOperationSidebar(true)
+
+
+
+
+      }
+    },
+    [screenToFlowPosition],
+  );
   return (
     <WorkflowOperationContext.Provider value={{
       openOperationSidebar,
@@ -111,7 +164,10 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
       onNodesChange,
       edges,
       setEdges,
-      hasTriggerStep
+      onEdgesChange,
+      hasTriggerStep,
+      onConnect,
+      onConnectEnd
     }}>
       {children}
     </WorkflowOperationContext.Provider>

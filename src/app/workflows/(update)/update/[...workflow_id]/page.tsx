@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 import ReactFlowPlayground from '@/components/react-flow/ReactFlowPlayground'
 import { PlaybookTaskNode } from '@/components/react-flow/schema'
-import { Edge, Node } from '@xyflow/react'
+import { Edge, Node, ReactFlowProvider } from '@xyflow/react'
 
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import WorkflowService from '@/services/worfklows/workflows'
@@ -32,15 +32,19 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
   }
 
   return (
-    <WorkflowOperationProvider workflowQuery={workflowQuery}>
-      <WorkflowPlayground workflowQuery={workflowQuery} />
-    </WorkflowOperationProvider>
+    <ReactFlowProvider >
+      <WorkflowOperationProvider workflowQuery={workflowQuery}>
+        <WorkflowPlayground workflowQuery={workflowQuery} />
+      </WorkflowOperationProvider>
+
+    </ReactFlowProvider>
+
 
   )
 }
 
 const WorkflowPlayground: React.FC<{ workflowQuery: UseQueryResult<Workflow, Error> }> = ({ workflowQuery }) => {
-  const { nodes, onNodesChange, edges, hasTriggerStep, setCurrentNode, setOpenOperationSidebar, openOperationSidebar } = useContext(WorkflowOperationContext);
+  const { nodes, onNodesChange, onConnect, onConnectEnd, edges, onEdgesChange, setCurrentNode, setOpenOperationSidebar, openOperationSidebar } = useContext(WorkflowOperationContext);
   const onNodeDoubleClickHandler = (e: React.MouseEvent<Element, MouseEvent>, node: Node<PlaybookTaskNode>) => {
     setOpenOperationSidebar(true)
     setCurrentNode(node)
@@ -72,7 +76,10 @@ const WorkflowPlayground: React.FC<{ workflowQuery: UseQueryResult<Workflow, Err
             nodes,
             edges,
             onNodeDoubleClick: onNodeDoubleClickHandler,
-            onNodesChange: (changes) => onNodesChange(changes)
+            onNodesChange,
+            onEdgesChange,
+            onConnect,
+            onConnectEnd
           }} />
 
       </div>
