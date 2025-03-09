@@ -4,8 +4,11 @@ import { PlaybookTaskNode } from '@/components/react-flow/schema';
 import { UseQueryResult } from '@tanstack/react-query';
 import { Edges, Tasks, Workflow, WorkflowDataToUpdate } from '@/services/worfklows/workflows.schema';
 import { FLOW_SELECT_TRIGGER_ID, FLOW_START_ID } from '@/settings/reactFlowIds';
+import { TaskOperationType } from '../_components/WorkflowOperations';
 
 export type WorkflowOperationType = {
+  taskOperation: TaskOperationType
+  setTaskOperation: React.Dispatch<React.SetStateAction<TaskOperationType>>
   openOperationSidebar: boolean
   setOpenOperationSidebar: React.Dispatch<React.SetStateAction<boolean>>
   workflowData: WorkflowDataToUpdate
@@ -24,6 +27,8 @@ export type WorkflowOperationType = {
 }
 
 export const WorkflowOperationContext = createContext<WorkflowOperationType>({
+  taskOperation: null,
+  setTaskOperation: () => { },
   openOperationSidebar: false,
   setOpenOperationSidebar: () => { },
   workflowData: {},
@@ -53,6 +58,7 @@ const INITIAL_START_NODE_VALUE: Node<PlaybookTaskNode> = {
 
 
 const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQueryResult<Workflow, Error> }> = ({ children, workflowQuery }) => {
+  const [taskOperation, setTaskOperation] = useState<TaskOperationType>(null) // this is to show what operation we need to show in the container
   const [openOperationSidebar, setOpenOperationSidebar] = useState(false)
   const [workflowData, setWorkflowData] = useState<WorkflowDataToUpdate>({})
   const [nodes, setNodes, onNodesChange] = useNodesState<Node<PlaybookTaskNode>>([])
@@ -144,15 +150,14 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
 
         setOpenOperationSidebar(true)
 
-
-
-
       }
     },
     [screenToFlowPosition],
   );
   return (
     <WorkflowOperationContext.Provider value={{
+      taskOperation,
+      setTaskOperation,
       openOperationSidebar,
       setOpenOperationSidebar,
       workflowData,
