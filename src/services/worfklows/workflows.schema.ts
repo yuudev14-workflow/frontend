@@ -9,6 +9,14 @@ export interface Workflow {
   edges?: Edges[] | null;
 }
 
+export interface WorkflowTriggerType {
+  id: string;
+  name: string;
+  description?: string | null;
+}
+
+export type WorkflowDataToUpdate = Partial<Pick<Workflow, "name" | "description" | "trigger_type">>
+
 export type CreateWorkflowPayload = Partial<
   Pick<Workflow, "name" | "description">
 >;

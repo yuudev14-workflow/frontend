@@ -17,7 +17,7 @@ const layout = ({
   })
 
   if (workflowQuery.data === undefined) {
-    return
+    return <></>
   }
   return (
     <div className="flex">
