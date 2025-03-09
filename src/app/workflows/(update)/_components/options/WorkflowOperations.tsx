@@ -2,15 +2,15 @@ import { Workflow } from "@/services/worfklows/workflows.schema"
 import { UseQueryResult } from "@tanstack/react-query"
 import React, { useContext, useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
-import SelectWorkflowTrigger from "./SelectWorkflowTrigger"
+import SelectWorkflowTrigger from "./SelectWorkflowTriggerOption"
 import SelectTaskOptions from "./SelectTaskOptions"
 import { MoveLeft, X } from "lucide-react"
-import { WorkflowOperationContext } from "../_providers/WorkflowOperationProvider"
 import WorkFlowTriggerParameters from "./WorkFlowTriggerParameters"
 import { FLOW_SELECT_TRIGGER_ID, FLOW_START_ID } from "@/settings/reactFlowIds"
 import ConnectorsOption from "./ConnectorsOption"
+import SelectWorkflowTriggerOption from "./SelectWorkflowTriggerOption"
+import { TaskOperationType, WorkflowOperationContext } from "../../_providers/WorkflowOperationProvider"
 
-export type TaskOperationType = "connector" | "utility" | "code" | "decision" | "wait" | "approval" | "input_prompt" | null
 
 const WorkflowOperations: React.FC<{
   workflowQuery: UseQueryResult<Workflow, Error>
@@ -40,7 +40,7 @@ const WorkflowOperations: React.FC<{
         <X size={16} />
       </button>
       {!hasTriggerStep && currentNode?.id == FLOW_SELECT_TRIGGER_ID ? (
-        <SelectWorkflowTrigger />
+        <SelectWorkflowTriggerOption />
       ) : hasTriggerStep && currentNode?.id == FLOW_START_ID ? (
         <WorkFlowTriggerParameters />
       ) : taskOperation === null ? (

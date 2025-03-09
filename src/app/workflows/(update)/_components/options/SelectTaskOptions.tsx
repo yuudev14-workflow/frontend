@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/tooltip"
 import { Cable, CircleCheckBig, Code, Info, LucideProps, Network, PencilLineIcon, Timer, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { TaskOperationType } from './WorkflowOperations'
+import { TaskOperationType } from '../../_providers/WorkflowOperationProvider'
 
 type OperationOption = {
   label: string;

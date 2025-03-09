@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import OptionButton from '@/components/buttons/OptionButton'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,20 +15,36 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { ConnectorInfo, Operation } from '@/services/connectors/connectors.schema'
+import OperationLayout from '../OperationLayout'
+import { WorkflowOperationContext } from '../../_providers/WorkflowOperationProvider'
 
 
 
 const ConnectorsOption = () => {
   const [connector, setConnector] = useState<ConnectorInfo | null>(null)
-  if (connector === null) return <ConnectorList setConnector={setConnector} />
-  return <ConnectorOperation connector={connector} />
+  const { setTaskOperation } = useContext(WorkflowOperationContext)
+  if (connector === null) return (
+    <OperationLayout backHandler={() => {
+      setConnector(null)
+      setTaskOperation(null)
+    }}>
+      <ConnectorList setConnector={setConnector} />
+    </OperationLayout>
+  )
+  return (
+    <OperationLayout backHandler={() => {
+      setConnector(null)
+
+    }}>
+      <ConnectorOperation connector={connector} />
+    </OperationLayout>
+  )
 }
 
 const ConnectorOperation: React.FC<{ connector: ConnectorInfo }> = ({ connector }) => {
   const [currentOperation, setCurrentOperation] = useState<Operation | null>(null)
 
   const onChangeOperationHandler = (value: string) => {
-    console.log(value)
     const filterOperation = connector.operations.filter(operation => value === operation.annotation)
     setCurrentOperation(filterOperation[0] ?? null)
   }

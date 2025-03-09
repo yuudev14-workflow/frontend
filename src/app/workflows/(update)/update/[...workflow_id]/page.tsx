@@ -8,11 +8,11 @@ import { Node, ReactFlowProvider } from '@xyflow/react'
 
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import WorkflowService from '@/services/worfklows/workflows'
-import WorkflowOperations from '../../_components/WorkflowOperations'
 import { Button } from '@/components/ui/button'
 import { ArrowRightIcon } from 'lucide-react'
 import { Workflow } from '@/services/worfklows/workflows.schema'
 import WorkflowOperationProvider, { WorkflowOperationContext } from '../../_providers/WorkflowOperationProvider'
+import WorkflowOperations from '../../_components/options/WorkflowOperations'
 
 
 

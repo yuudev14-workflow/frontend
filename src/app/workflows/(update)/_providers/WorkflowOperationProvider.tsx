@@ -4,7 +4,9 @@ import { PlaybookTaskNode } from '@/components/react-flow/schema';
 import { UseQueryResult } from '@tanstack/react-query';
 import { Edges, Tasks, Workflow, WorkflowDataToUpdate } from '@/services/worfklows/workflows.schema';
 import { FLOW_SELECT_TRIGGER_ID, FLOW_START_ID } from '@/settings/reactFlowIds';
-import { TaskOperationType } from '../_components/WorkflowOperations';
+
+export type TaskOperationType = "connector" | "utility" | "code" | "decision" | "wait" | "approval" | "input_prompt" | null
+
 
 export type WorkflowOperationType = {
   taskOperation: TaskOperationType

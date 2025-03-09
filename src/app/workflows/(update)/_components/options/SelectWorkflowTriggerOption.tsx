@@ -6,11 +6,11 @@ import { Separator } from '@/components/ui/separator'
 import { MousePointerClick, Webhook } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import WorkflowService from '@/services/worfklows/workflows'
-import { WorkflowOperationContext } from '../_providers/WorkflowOperationProvider'
 import { WorkflowTriggerType } from '@/services/worfklows/workflows.schema'
 import { FLOW_SELECT_TRIGGER_ID, FLOW_START_ID } from '@/settings/reactFlowIds'
+import { WorkflowOperationContext } from '../../_providers/WorkflowOperationProvider'
 
-const SelectWorkflowTrigger = () => {
+const SelectWorkflowTriggerOption = () => {
 
   const { setWorkflowData, setOpenOperationSidebar, setNodes } = useContext(WorkflowOperationContext)
   const triggerTypesQuery = useQuery({
@@ -71,4 +71,4 @@ const SelectWorkflowTrigger = () => {
   )
 }
 
-export default SelectWorkflowTrigger
+export default SelectWorkflowTriggerOption
