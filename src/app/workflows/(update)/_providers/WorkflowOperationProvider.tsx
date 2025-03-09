@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useMemo, useState } from 'react';
-import { Edge, Node } from '@xyflow/react'
+import { Edge, Node, OnNodesChange, useNodesState } from '@xyflow/react'
 import { PlaybookTaskNode } from '@/components/react-flow/schema';
 import { UseQueryResult } from '@tanstack/react-query';
 import { Edges, Tasks, Workflow, WorkflowDataToUpdate } from '@/services/worfklows/workflows.schema';
@@ -13,6 +13,7 @@ export type WorkflowOperationType = {
   setCurrentNode: React.Dispatch<React.SetStateAction<Node<PlaybookTaskNode> | null>>
   nodes: Node<PlaybookTaskNode>[]
   setNodes: React.Dispatch<React.SetStateAction<Node<PlaybookTaskNode>[]>>
+  onNodesChange: OnNodesChange<Node<PlaybookTaskNode>>
   edges: Edge[]
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>>
   hasTriggerStep: boolean
@@ -27,6 +28,7 @@ export const WorkflowOperationContext = createContext<WorkflowOperationType>({
   setCurrentNode: () => { },
   nodes: [],
   setNodes: () => { },
+  onNodesChange: () => { },
   edges: [],
   setEdges: () => { },
   hasTriggerStep: false
@@ -40,14 +42,15 @@ const INITIAL_START_NODE_VALUE = {
     }
   },
   position: { x: 100, y: 100 },
-  type: "start",
+  type: "playbookNodes",
+  dragHandle: '.drag-handle__custom',
 }
 
 
 const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQueryResult<Workflow, Error> }> = ({ children, workflowQuery }) => {
   const [openOperationSidebar, setOpenOperationSidebar] = useState(false)
   const [workflowData, setWorkflowData] = useState<WorkflowDataToUpdate>({})
-  const [nodes, setNodes] = useState<Node<PlaybookTaskNode>[]>([])
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node<PlaybookTaskNode>>([])
   const [currentNode, setCurrentNode] = useState<Node<PlaybookTaskNode> | null>(null)
   const [edges, setEdges] = useState<Edge[]>([])
 
@@ -57,6 +60,7 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
       data: task.name === "start" ? { label: "start", task: task } : { task },
       position: { x: task.x, y: task.y },
       type: task.name === "start" ? "input" : "playbookNodes",
+      dragHandle: '.drag-handle__custom',
     }
 
     return data
@@ -104,6 +108,7 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
       currentNode,
       setCurrentNode,
       setNodes,
+      onNodesChange,
       edges,
       setEdges,
       hasTriggerStep

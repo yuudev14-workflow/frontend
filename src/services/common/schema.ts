@@ -1,4 +1,4 @@
-export interface EntyResponse<T> {
+export interface EntryResponse<T> {
   entries: T[]
   total: number
 

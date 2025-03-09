@@ -12,7 +12,7 @@ const PlaybookNode: React.FC<NodeProps<NodeComponentProps>> = (props) => {
   }, []);
 
   return (
-    <>
+    <div className="drag-handle__custom">
       {/* Source Handles */}
       <Handle type="source" position={Position.Top} id="top-handle" />
       <Handle type="source" position={Position.Bottom} id="bottom-handle" />
@@ -35,7 +35,7 @@ const PlaybookNode: React.FC<NodeProps<NodeComponentProps>> = (props) => {
       <Handle type="target" position={Position.Left} id="target-left" />
       <Handle type="target" position={Position.Right} id="target-right" />
 
-    </>
+    </div>
   )
 }
 

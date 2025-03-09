@@ -40,7 +40,7 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
 }
 
 const WorkflowPlayground: React.FC<{ workflowQuery: UseQueryResult<Workflow, Error> }> = ({ workflowQuery }) => {
-  const { nodes, edges, hasTriggerStep, setCurrentNode, setOpenOperationSidebar, openOperationSidebar } = useContext(WorkflowOperationContext);
+  const { nodes, onNodesChange, edges, hasTriggerStep, setCurrentNode, setOpenOperationSidebar, openOperationSidebar } = useContext(WorkflowOperationContext);
   const onNodeDoubleClickHandler = (e: React.MouseEvent<Element, MouseEvent>, node: Node<PlaybookTaskNode>) => {
     setOpenOperationSidebar(true)
     setCurrentNode(node)
@@ -71,8 +71,8 @@ const WorkflowPlayground: React.FC<{ workflowQuery: UseQueryResult<Workflow, Err
           flowProps={{
             nodes,
             edges,
-            nodesDraggable: false,
             onNodeDoubleClick: onNodeDoubleClickHandler,
+            onNodesChange: (changes) => onNodesChange(changes)
           }} />
 
       </div>
