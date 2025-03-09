@@ -3,6 +3,7 @@ import { addEdge, Connection, Edge, FinalConnectionState, Node, OnEdgesChange, O
 import { PlaybookTaskNode } from '@/components/react-flow/schema';
 import { UseQueryResult } from '@tanstack/react-query';
 import { Edges, Tasks, Workflow, WorkflowDataToUpdate } from '@/services/worfklows/workflows.schema';
+import { FLOW_SELECT_TRIGGER_ID, FLOW_START_ID } from '@/settings/reactFlowIds';
 
 export type WorkflowOperationType = {
   openOperationSidebar: boolean
@@ -40,16 +41,14 @@ export const WorkflowOperationContext = createContext<WorkflowOperationType>({
   onConnectEnd: (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => { }
 });
 
-const INITIAL_START_NODE_VALUE = {
-  id: "start",
+const INITIAL_START_NODE_VALUE: Node<PlaybookTaskNode> = {
+  id: FLOW_SELECT_TRIGGER_ID,
   data: {
-    label: "start", task: {
-      name: "start"
-    }
+    label: FLOW_SELECT_TRIGGER_ID.replace("_", " "),
   },
   position: { x: 100, y: 100 },
   type: "start",
-  dragHandle: '.drag-handle__custom',
+  draggable: false
 }
 
 
@@ -68,10 +67,10 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
     const setMappedNodes = (task: Tasks) => {
       const data: Node<PlaybookTaskNode> = {
         id: task.id,
-        data: task.name === "start" ? { label: "start", task: task } : { task },
+        data: task.name === FLOW_START_ID ? { label: "start", task: task } : { task },
         position: { x: task.x, y: task.y },
         type: task.name === "start" ? "input" : "playbookNodes",
-        dragHandle: '.drag-handle__custom',
+        draggable: true
       }
 
       return data
@@ -83,9 +82,10 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
       target: edge.destination_id,
     })
     const _nodes = workflowQuery.data?.tasks?.map(setMappedNodes) ?? []
-    // if task doesnt have a node with a name start, add a start node
-    // also open the sidebar operation to notify the user to select trigger quicjly
-    if (_nodes.some(task => task.data.task?.name === "start") == false) {
+    // if task doesnt have a node with a name start, 
+    // add a new node for selecting a trigger. open the sidebar 
+    // operation to notify the user to select trigger quickly
+    if (_nodes.some(task => task.data.task?.name === FLOW_START_ID) == false) {
       _nodes.unshift(INITIAL_START_NODE_VALUE)
       setCurrentNode(INITIAL_START_NODE_VALUE)
       setOpenOperationSidebar(true)
@@ -132,14 +132,14 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
           }),
           data: {},
           type: "playbookNodes",
-          dragHandle: '.drag-handle__custom',
+          draggable: true
         };
 
         setNodes((nds) => nds.concat(newNode));
         setCurrentNode(newNode)
 
         setEdges((eds) =>
-          eds.concat({ id, source: connectionState.fromNode!.id, target: id }),
+          eds.concat({ id, source: connectionState.fromNode!.id, target: id, }),
         );
 
         setOpenOperationSidebar(true)

@@ -1,17 +1,17 @@
 "use client"
 
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext } from 'react'
 
 import ReactFlowPlayground from '@/components/react-flow/ReactFlowPlayground'
 import { PlaybookTaskNode } from '@/components/react-flow/schema'
-import { Edge, Node, ReactFlowProvider } from '@xyflow/react'
+import { Node, ReactFlowProvider } from '@xyflow/react'
 
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import WorkflowService from '@/services/worfklows/workflows'
 import WorkflowOperations from '../../_components/WorkflowOperations'
 import { Button } from '@/components/ui/button'
 import { ArrowRightIcon } from 'lucide-react'
-import { Edges, Tasks, Workflow } from '@/services/worfklows/workflows.schema'
+import { Workflow } from '@/services/worfklows/workflows.schema'
 import WorkflowOperationProvider, { WorkflowOperationContext } from '../../_providers/WorkflowOperationProvider'
 
 
@@ -44,10 +44,11 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
 }
 
 const WorkflowPlayground: React.FC<{ workflowQuery: UseQueryResult<Workflow, Error> }> = ({ workflowQuery }) => {
-  const { nodes, onNodesChange, onConnect, onConnectEnd, edges, onEdgesChange, setCurrentNode, setOpenOperationSidebar, openOperationSidebar } = useContext(WorkflowOperationContext);
+  const { nodes, hasTriggerStep, onNodesChange, onConnect, onConnectEnd, edges, onEdgesChange, setCurrentNode, setOpenOperationSidebar, openOperationSidebar } = useContext(WorkflowOperationContext);
   const onNodeDoubleClickHandler = (e: React.MouseEvent<Element, MouseEvent>, node: Node<PlaybookTaskNode>) => {
     setOpenOperationSidebar(true)
-    setCurrentNode(node)
+    if (node.id !== "select_start")
+      setCurrentNode(node)
     console.log(node)
   }
 

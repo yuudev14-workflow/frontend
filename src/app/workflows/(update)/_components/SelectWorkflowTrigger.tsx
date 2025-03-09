@@ -8,10 +8,11 @@ import { useQuery } from '@tanstack/react-query'
 import WorkflowService from '@/services/worfklows/workflows'
 import { WorkflowOperationContext } from '../_providers/WorkflowOperationProvider'
 import { WorkflowTriggerType } from '@/services/worfklows/workflows.schema'
+import { FLOW_SELECT_TRIGGER_ID, FLOW_START_ID } from '@/settings/reactFlowIds'
 
 const SelectWorkflowTrigger = () => {
 
-  const { setWorkflowData, setCurrentNode, setOpenOperationSidebar } = useContext(WorkflowOperationContext)
+  const { setWorkflowData, setOpenOperationSidebar, setNodes } = useContext(WorkflowOperationContext)
   const triggerTypesQuery = useQuery({
     queryKey: ['workflow-trigger-type-lists'],
     queryFn: async () => {
@@ -32,7 +33,19 @@ const SelectWorkflowTrigger = () => {
 
   const selectTriggerType = (trigger: WorkflowTriggerType) => {
     setWorkflowData(workflow => ({ ...workflow, trigger_type: trigger.id }))
-    setCurrentNode(null)
+    setNodes(nodes => {
+      return nodes.filter(_node => _node.id !== FLOW_SELECT_TRIGGER_ID).concat({
+        id: FLOW_START_ID,
+        data: {
+          label: "start", task: {
+            name: "start"
+          }
+        },
+        position: { x: 100, y: 100 },
+        type: "start",
+        draggable: true,
+      })
+    })
     setOpenOperationSidebar(false)
   }
 

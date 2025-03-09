@@ -9,6 +9,7 @@ import ConnectorList from "./ConnectorList"
 import { MoveLeft, X } from "lucide-react"
 import { WorkflowOperationContext } from "../_providers/WorkflowOperationProvider"
 import WorkFlowTriggerParameters from "./WorkFlowTriggerParameters"
+import { FLOW_SELECT_TRIGGER_ID, FLOW_START_ID } from "@/settings/reactFlowIds"
 
 export type TaskOperationType = "connector" | "utility" | "code" | "decision" | "wait" | "approval" | "input_prompt" | null
 
@@ -16,17 +17,32 @@ const WorkflowOperations: React.FC<{
   workflowQuery: UseQueryResult<Workflow, Error>
 }> = ({ workflowQuery}) => {
   const [taskOperation, setTaskOperation] = useState<TaskOperationType>(null) // this is to show what operation we need to show in the container
-  const {hasTriggerStep, currentNode, setOpenOperationSidebar} = useContext(WorkflowOperationContext)
+  const {hasTriggerStep, currentNode, setOpenOperationSidebar, setCurrentNode, setNodes} = useContext(WorkflowOperationContext)
+  const [openCancelModal, setOpenCancelModal] = useState(false)
+
+  const cancelHandler = () => {
+    setOpenOperationSidebar(false)
+    if (currentNode)
+
+    setNodes((nodes) => {
+      if (currentNode == null || [FLOW_START_ID, FLOW_SELECT_TRIGGER_ID].includes(currentNode.id)) {
+        return nodes
+      }
+      return nodes.filter(_node => _node.id !== currentNode.id)
+    })
+    setCurrentNode(null)
+
+  }
   
   return (
 
     <div className='absolute flex flex-col max-w-[500px] w-full bg-background border-r border-r-border h-full top-0 left-0 z-50'>
-      <button className="absolute top-5 right-5" onClick={() => setOpenOperationSidebar(false)}>
+      <button className="absolute top-5 right-5" onClick={cancelHandler}>
         <X size={16} />
       </button>
-      {!hasTriggerStep && currentNode?.data.task?.name == "start"  ? (
+      {!hasTriggerStep && currentNode?.id == FLOW_SELECT_TRIGGER_ID  ? (
         <SelectWorkflowTrigger />
-      ) : hasTriggerStep && currentNode?.data.task?.name == "start" ? (
+      ) : hasTriggerStep && currentNode?.id == FLOW_START_ID ? (
         <WorkFlowTriggerParameters />
       ) : taskOperation === null ? (
         <SelectTaskOptions setTaskOperation={setTaskOperation} />
