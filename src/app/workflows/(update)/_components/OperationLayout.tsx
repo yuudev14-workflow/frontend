@@ -8,7 +8,7 @@ const OperationLayout: React.FC<{
 }> = ({ children, backHandler }) => {
 
   return (
-    <div>
+    <>
       <div className="p-3 pb-0">
         <Button variant="outline" onClick={backHandler}>
           <MoveLeft />
@@ -16,7 +16,7 @@ const OperationLayout: React.FC<{
         </Button>
       </div>
       {children}
-    </div>
+    </>
 
   )
 }

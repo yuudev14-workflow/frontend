@@ -7,7 +7,7 @@ import SelectTaskOptions from "./SelectTaskOptions"
 import { MoveLeft, X } from "lucide-react"
 import WorkFlowTriggerParameters from "./WorkFlowTriggerParameters"
 import { FLOW_SELECT_TRIGGER_ID, FLOW_START_ID } from "@/settings/reactFlowIds"
-import ConnectorsOption from "./ConnectorsOption"
+import { ConnectorsOption } from "./ConnectorsOption"
 import SelectWorkflowTriggerOption from "./SelectWorkflowTriggerOption"
 import { TaskOperationType, WorkflowOperationContext } from "../../_providers/WorkflowOperationProvider"
 
