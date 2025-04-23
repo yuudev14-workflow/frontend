@@ -1,34 +1,38 @@
-import { Workflow } from "@/services/worfklows/workflows.schema"
-import { UseQueryResult } from "@tanstack/react-query"
-import React, { useContext, useMemo, useState } from "react"
-import { Button } from "@/components/ui/button"
-import SelectWorkflowTrigger from "./SelectWorkflowTriggerOption"
-import SelectTaskOptions from "./SelectTaskOptions"
-import { MoveLeft, X } from "lucide-react"
-import WorkFlowTriggerParameters from "./WorkFlowTriggerParameters"
+import React, { useContext } from "react"
+import SelectTaskOptions from "../SelectTaskOptions"
+import { X } from "lucide-react"
+import WorkFlowTriggerParameters from "../WorkflowTriggerParameters/WorkFlowTriggerParameters"
 import { FLOW_SELECT_TRIGGER_ID, FLOW_START_ID } from "@/settings/reactFlowIds"
-import { ConnectorsOption } from "./ConnectorsOption"
-import SelectWorkflowTriggerOption from "./SelectWorkflowTriggerOption"
-import { TaskOperationType, WorkflowOperationContext } from "../../_providers/WorkflowOperationProvider"
+import { ConnectorsOption } from "../ConnectorsOption"
+import SelectWorkflowTriggerOption from "../SelectWorkflowTriggerOption"
+import { TaskOperationType, WorkflowOperationContext } from "../../../_providers/WorkflowOperationProvider"
 
 
-const WorkflowOperations: React.FC<{
-  workflowQuery: UseQueryResult<Workflow, Error>
-}> = ({ workflowQuery }) => {
-  const { hasTriggerStep, currentNode, setOpenOperationSidebar, setCurrentNode, setNodes, taskOperation, setTaskOperation } = useContext(WorkflowOperationContext)
-  const [openCancelModal, setOpenCancelModal] = useState(false)
+const WorkflowOperations: React.FC = () => {
+  const { 
+    hasTriggerStep,
+    isNewNode,
+    setIsNewNode,
+    currentNode,
+    setOpenOperationSidebar,
+    setCurrentNode,
+    setNodes,
+    taskOperation,
+    setTaskOperation
+  } = useContext(WorkflowOperationContext)
 
   const cancelHandler = () => {
     setOpenOperationSidebar(false)
     if (currentNode)
 
       setNodes((nodes) => {
-        if (currentNode == null || [FLOW_START_ID, FLOW_SELECT_TRIGGER_ID].includes(currentNode.id)) {
+        if (currentNode == null || [FLOW_START_ID, FLOW_SELECT_TRIGGER_ID].includes(currentNode.id) || !isNewNode) {
           return nodes
         }
         return nodes.filter(_node => _node.id !== currentNode.id)
       })
     setCurrentNode(null)
+    setIsNewNode(false)
 
   }
 

@@ -26,6 +26,8 @@ export type WorkflowOperationType = {
   hasTriggerStep: boolean
   onConnect: (params: Connection) => void
   onConnectEnd: (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => void
+  isNewNode: boolean
+  setIsNewNode: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const WorkflowOperationContext = createContext<WorkflowOperationType>({
@@ -45,7 +47,9 @@ export const WorkflowOperationContext = createContext<WorkflowOperationType>({
   onEdgesChange: () => { },
   hasTriggerStep: false,
   onConnect: (params: Connection) => { },
-  onConnectEnd: (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => { }
+  onConnectEnd: (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => { },
+  isNewNode: false,
+  setIsNewNode: () => { },
 });
 
 const INITIAL_START_NODE_VALUE: Node<PlaybookTaskNode> = {
@@ -62,6 +66,7 @@ const INITIAL_START_NODE_VALUE: Node<PlaybookTaskNode> = {
 const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQueryResult<Workflow, Error> }> = ({ children, workflowQuery }) => {
   const [taskOperation, setTaskOperation] = useState<TaskOperationType>(null) // this is to show what operation we need to show in the container
   const [openOperationSidebar, setOpenOperationSidebar] = useState(false)
+  const [isNewNode, setIsNewNode] = useState(false)
   const [workflowData, setWorkflowData] = useState<WorkflowDataToUpdate>({})
   const [nodes, setNodes, onNodesChange] = useNodesState<Node<PlaybookTaskNode>>([])
   const [currentNode, setCurrentNode] = useState<Node<PlaybookTaskNode> | null>(null)
@@ -151,6 +156,8 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
         );
 
         setOpenOperationSidebar(true)
+        setIsNewNode(true)
+        
 
       }
     },
@@ -174,7 +181,9 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
       onEdgesChange,
       hasTriggerStep,
       onConnect,
-      onConnectEnd
+      onConnectEnd,
+      isNewNode,
+      setIsNewNode,
     }}>
       {children}
     </WorkflowOperationContext.Provider>

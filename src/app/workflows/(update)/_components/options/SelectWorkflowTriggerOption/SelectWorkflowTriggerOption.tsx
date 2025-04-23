@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query'
 import WorkflowService from '@/services/worfklows/workflows'
 import { WorkflowTriggerType } from '@/services/worfklows/workflows.schema'
 import { FLOW_SELECT_TRIGGER_ID, FLOW_START_ID } from '@/settings/reactFlowIds'
-import { WorkflowOperationContext } from '../../_providers/WorkflowOperationProvider'
+import { WorkflowOperationContext } from '../../../_providers/WorkflowOperationProvider'
 
 const SelectWorkflowTriggerOption = () => {
 

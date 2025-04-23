@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { ArrowRightIcon } from 'lucide-react'
 import { Workflow } from '@/services/worfklows/workflows.schema'
 import WorkflowOperationProvider, { WorkflowOperationContext } from '../../_providers/WorkflowOperationProvider'
-import WorkflowOperations from '../../_components/options/WorkflowOperations'
+import WorkflowOperations from '../../_components/options/WorkflowOperations/WorkflowOperations'
 
 
 
@@ -44,12 +44,24 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({ params }
 }
 
 const WorkflowPlayground: React.FC<{ workflowQuery: UseQueryResult<Workflow, Error> }> = ({ workflowQuery }) => {
-  const { nodes, hasTriggerStep, onNodesChange, onConnect, onConnectEnd, edges, onEdgesChange, setCurrentNode, setOpenOperationSidebar, openOperationSidebar } = useContext(WorkflowOperationContext);
+  const { 
+    nodes,
+    hasTriggerStep,
+    onNodesChange,
+    onConnect,
+    onConnectEnd,
+    edges,
+    onEdgesChange,
+    setCurrentNode,
+    setOpenOperationSidebar,
+    openOperationSidebar } = useContext(WorkflowOperationContext);
+
+    
   const onNodeDoubleClickHandler = (e: React.MouseEvent<Element, MouseEvent>, node: Node<PlaybookTaskNode>) => {
     setOpenOperationSidebar(true)
-    if (node.id !== "select_start")
+    if (node.id !== "select_start") {
       setCurrentNode(node)
-    console.log(node)
+    }
   }
 
   return (
@@ -60,7 +72,7 @@ const WorkflowPlayground: React.FC<{ workflowQuery: UseQueryResult<Workflow, Err
         </Button>
       </div>
       {
-        openOperationSidebar && <WorkflowOperations workflowQuery={workflowQuery} />
+        openOperationSidebar && <WorkflowOperations />
       }
 
 
