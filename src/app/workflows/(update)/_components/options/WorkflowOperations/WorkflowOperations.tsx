@@ -9,7 +9,7 @@ import { TaskOperationType, WorkflowOperationContext } from "../../../_providers
 
 
 const WorkflowOperations: React.FC = () => {
-  const { 
+  const {
     hasTriggerStep,
     isNewNode,
     setIsNewNode,
@@ -33,13 +33,14 @@ const WorkflowOperations: React.FC = () => {
       })
     setCurrentNode(null)
     setIsNewNode(false)
+    setTaskOperation(null)
 
   }
 
 
   return (
 
-    <div className='absolute flex flex-col max-w-[500px] w-full bg-background border-r border-r-border h-full top-0 left-0 z-50'>
+    <div className='absolute flex flex-col max-w-[500px] w-full bg-background border-r border-r-border h-[calc(100vh-64px)] top-0 left-0 z-50'>
       <button className="absolute top-5 right-5" onClick={cancelHandler}>
         <X size={16} />
       </button>
@@ -50,10 +51,9 @@ const WorkflowOperations: React.FC = () => {
       ) : taskOperation === null ? (
         <SelectTaskOptions setTaskOperation={setTaskOperation} />
       ) : (
-        <div>
 
-          <OperationWindow taskOperation={taskOperation} setTaskOperation={setTaskOperation} />
-        </div>
+        <OperationWindow taskOperation={taskOperation} setTaskOperation={setTaskOperation} />
+
       )
 
       }

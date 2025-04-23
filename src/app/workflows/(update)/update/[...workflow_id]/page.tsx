@@ -56,16 +56,17 @@ const WorkflowPlayground: React.FC<{ workflowQuery: UseQueryResult<Workflow, Err
     setOpenOperationSidebar,
     openOperationSidebar } = useContext(WorkflowOperationContext);
 
-    
+
   const onNodeDoubleClickHandler = (e: React.MouseEvent<Element, MouseEvent>, node: Node<PlaybookTaskNode>) => {
     setOpenOperationSidebar(true)
     if (node.id !== "select_start") {
       setCurrentNode(node)
     }
+    console.log(node)
   }
 
   return (
-    <div className='relative h-full'>
+    <div className='relative h-[calc(100vh-4rem)]'>
       <div className='absolute flex flex-col bg-background border-r border-r-border top-40 left-0 z-50'>
         <Button className="rounded-e-2xl" onClick={() => setOpenOperationSidebar(true)}>
           <ArrowRightIcon />

@@ -11,9 +11,31 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+
+const taskFormSchema = z.object({
+  name: z.string().min(2, {
+    message: "name must be at least 2 characters.",
+  }),
+  description: z.string().optional(),
+  parameters: z.record(z.any()).nullable().optional(),
+  config: z.string().optional(),
+  connector_name: z.string(),
+  operation: z.string(),
+})
 
 const ConnectorOperation: React.FC<{ connector: ConnectorInfo }> = ({ connector }) => {
   const [currentOperation, setCurrentOperation] = useState<Operation | null>(null)
+
+  const taskForm = useForm<z.infer<typeof taskFormSchema>>({
+    resolver: zodResolver(taskFormSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+    },
+  })
 
   const onChangeOperationHandler = (value: string) => {
     const filterOperation = connector.operations.filter(operation => value === operation.annotation)
@@ -92,7 +114,7 @@ const ConnectorOperation: React.FC<{ connector: ConnectorInfo }> = ({ connector 
         </div>
       </div>
       <footer className='mt-auto border-t border-border border p-3'>
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-between gap-2">
           <Button>Close</Button>
           <Button>Save</Button>
         </div>
