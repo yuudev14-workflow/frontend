@@ -3,6 +3,7 @@ export interface ConnectorInfo {
   id: string;
   configuration: Configuration;
   operations: Operation[];
+  configs: string[]
 }
 
 export interface Configuration {
