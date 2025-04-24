@@ -36,7 +36,6 @@ const ConnectorOperation: React.FC<{ connector: ConnectorInfo }> = ({ connector 
       name: "",
       description: "",
       connector_name: connector.name,
-      operation: ""
     },
   })
 
@@ -49,6 +48,7 @@ const ConnectorOperation: React.FC<{ connector: ConnectorInfo }> = ({ connector 
         ops => ops.title === operationName
       );
       setCurrentOperation(matchedOperation ?? null);
+      taskForm.setValue("parameters", null)
     }
   }, [operationName]);
 
@@ -65,7 +65,7 @@ const ConnectorOperation: React.FC<{ connector: ConnectorInfo }> = ({ connector 
 
   return (
     <Form {...taskForm}>
-      <form onSubmit={taskForm.handleSubmit(onSubmit)}>
+      <form onSubmit={taskForm.handleSubmit(onSubmit)} className="flex flex-col flex-1">
         <div className='flex-1 flex flex-col gap-3 p-3 h-full'>
           <FormField
             control={taskForm.control}
