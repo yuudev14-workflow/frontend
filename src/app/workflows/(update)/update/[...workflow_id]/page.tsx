@@ -90,7 +90,10 @@ const WorkflowPlayground: React.FC<{ workflowQuery: UseQueryResult<Workflow, Err
             nodes,
             edges,
             onNodeDoubleClick: onNodeDoubleClickHandler,
-            onNodesChange,
+            onNodesChange: (changes) => {
+              console.log(changes)
+              onNodesChange(changes)
+            },
             onEdgesChange,
             onConnect,
             onConnectEnd

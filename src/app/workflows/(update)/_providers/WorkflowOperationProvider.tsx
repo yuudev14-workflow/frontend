@@ -82,7 +82,7 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
     const setMappedNodes = (task: Tasks) => {
       const data: Node<PlaybookTaskNode> = {
         id: task.id,
-        data: task.name === FLOW_START_ID ? { label: "start", task: task } : { task },
+        data: task.name === FLOW_START_ID ? { label: "start", ...task } : task ,
         position: { x: task.x, y: task.y },
         type: task.name === "start" ? "input" : "playbookNodes",
         draggable: true
@@ -100,7 +100,7 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
     // if task doesnt have a node with a name start, 
     // add a new node for selecting a trigger. open the sidebar 
     // operation to notify the user to select trigger quickly
-    if (_nodes.some(task => task.data.task?.name === FLOW_START_ID) == false) {
+    if (_nodes.some(task => task.data?.name === FLOW_START_ID) == false) {
       _nodes.unshift(INITIAL_START_NODE_VALUE)
       setCurrentNode(INITIAL_START_NODE_VALUE)
       setOpenOperationSidebar(true)

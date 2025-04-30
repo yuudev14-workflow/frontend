@@ -31,16 +31,16 @@ const taskFormSchema = z.object({
 
 const ConnectorOperation: React.FC<{ connector: ConnectorInfo }> = ({ connector }) => {
   const [currentOperation, setCurrentOperation] = useState<Operation | null>(null)
-  const { currentNode, setNodes, closeSidebar } = useContext(WorkflowOperationContext)
+  const { currentNode, setNodes, closeSidebar, onNodesChange, nodes } = useContext(WorkflowOperationContext)
   const [cachedParameter, setCachedParameter] = useState<Record<string, any>>({})
   const taskForm = useForm<z.infer<typeof taskFormSchema>>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: (() => {
-      const isSameConnector = connector.name === currentNode?.data.task?.connector_name;
-      const task = currentNode?.data.task;
-      
+      const isSameConnector = connector.name === currentNode?.data?.connector_name;
+      const task = currentNode?.data;
+
       return {
-        name: isSameConnector ? task?.name ?? "" : "",
+        name: task?.name ?? "",
         description: isSameConnector ? task?.description ?? "" : "",
         connector_name: connector.name,
         operation: isSameConnector ? task?.operation ?? "" : undefined,
@@ -62,7 +62,7 @@ const ConnectorOperation: React.FC<{ connector: ConnectorInfo }> = ({ connector 
         ops => ops.title === operationName
       );
       setCurrentOperation(matchedOperation ?? null);
-      taskForm.setValue("parameters", isFirstRender.current ? currentNode?.data.task?.parameters : cachedParameter[operationName])
+      taskForm.setValue("parameters", isFirstRender.current ? currentNode?.data?.parameters : cachedParameter[operationName])
     }
     isFirstRender.current = false
   }, [operationName]);
@@ -79,12 +79,13 @@ const ConnectorOperation: React.FC<{ connector: ConnectorInfo }> = ({ connector 
 
 
   const onSubmit = (val: z.infer<typeof taskFormSchema>) => {
+
     setNodes(nodes => nodes.map(node => {
       if (!currentNode) return node
       if (node.id === currentNode.id) {
-        node.data.task = {
-          ...node.data.task,
-          ...val,
+        return {
+          ...node,
+          data: { ...node.data, ...val, }
         }
       }
       return node

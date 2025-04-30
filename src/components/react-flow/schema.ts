@@ -1,5 +1,5 @@
 import { Tasks } from "@/services/worfklows/workflows.schema";
 
-export type PlaybookTaskNode = ({task: Tasks} | Partial<{task: Partial<Tasks>}>) & {
+export type PlaybookTaskNode = (Tasks | Partial<Partial<Tasks>>) & {
   label?: string
 };

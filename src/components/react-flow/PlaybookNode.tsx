@@ -23,7 +23,6 @@ const PlaybookNode: React.FC<NodeProps<NodeComponentProps>> = (props) => {
         </Avatar>
         <div className='flex-1 mr-9'>
           <p className='font-medium'>{props.data.name}</p>
-          <p>Operation</p>
         </div>
       </div>
       {/* Target Handles */}
