@@ -35,14 +35,19 @@ const ConnectorOperation: React.FC<{ connector: ConnectorInfo }> = ({ connector 
   const [cachedParameter, setCachedParameter] = useState<Record<string, any>>({})
   const taskForm = useForm<z.infer<typeof taskFormSchema>>({
     resolver: zodResolver(taskFormSchema),
-    defaultValues: {
-      name: connector.name === currentNode?.data.task?.connector_name ? currentNode?.data.task?.name ?? "" : "",
-      description: connector.name === currentNode?.data.task?.connector_name ? currentNode?.data.task?.description ?? "" : "",
-      connector_name: connector.name,
-      operation: connector.name === currentNode?.data.task?.connector_name ? currentNode?.data.task?.operation : undefined,
-      parameters: connector.name === currentNode?.data.task?.connector_name ? currentNode?.data.task?.parameters : undefined,
-      config: connector.name === currentNode?.data.task?.connector_name ? currentNode?.data.task?.config : "",
-    },
+    defaultValues: (() => {
+      const isSameConnector = connector.name === currentNode?.data.task?.connector_name;
+      const task = currentNode?.data.task;
+      
+      return {
+        name: isSameConnector ? task?.name ?? "" : "",
+        description: isSameConnector ? task?.description ?? "" : "",
+        connector_name: connector.name,
+        operation: isSameConnector ? task?.operation ?? "" : undefined,
+        parameters: isSameConnector ? task?.parameters : undefined,
+        config: isSameConnector ? task?.config : "",
+      };
+    })(),
   })
 
 
