@@ -12,29 +12,24 @@ const WorkflowOperations: React.FC = () => {
   const {
     hasTriggerStep,
     isNewNode,
-    setIsNewNode,
     currentNode,
-    setOpenOperationSidebar,
-    setCurrentNode,
     setNodes,
     taskOperation,
+    closeSidebar,
     setTaskOperation
   } = useContext(WorkflowOperationContext)
 
   const cancelHandler = () => {
-    setOpenOperationSidebar(false)
-    if (currentNode)
 
+    if (currentNode) {
       setNodes((nodes) => {
         if (currentNode == null || [FLOW_START_ID, FLOW_SELECT_TRIGGER_ID].includes(currentNode.id) || !isNewNode) {
           return nodes
         }
         return nodes.filter(_node => _node.id !== currentNode.id)
       })
-    setCurrentNode(null)
-    setIsNewNode(false)
-    setTaskOperation(null)
-
+    }
+    closeSidebar()
   }
 
 

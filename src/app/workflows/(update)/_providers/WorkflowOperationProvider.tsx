@@ -28,6 +28,7 @@ export type WorkflowOperationType = {
   onConnectEnd: (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => void
   isNewNode: boolean
   setIsNewNode: React.Dispatch<React.SetStateAction<boolean>>
+  closeSidebar: () => void
 }
 
 export const WorkflowOperationContext = createContext<WorkflowOperationType>({
@@ -50,6 +51,7 @@ export const WorkflowOperationContext = createContext<WorkflowOperationType>({
   onConnectEnd: (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => { },
   isNewNode: false,
   setIsNewNode: () => { },
+  closeSidebar: () => { },
 });
 
 const INITIAL_START_NODE_VALUE: Node<PlaybookTaskNode> = {
@@ -157,12 +159,20 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
 
         setOpenOperationSidebar(true)
         setIsNewNode(true)
-        
+
 
       }
     },
     [screenToFlowPosition],
   );
+
+  const closeSidebar = () => {
+    setOpenOperationSidebar(false)
+    setCurrentNode(null)
+    setIsNewNode(false)
+    setTaskOperation(null)
+
+  }
   return (
     <WorkflowOperationContext.Provider value={{
       taskOperation,
@@ -184,6 +194,7 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
       onConnectEnd,
       isNewNode,
       setIsNewNode,
+      closeSidebar,
     }}>
       {children}
     </WorkflowOperationContext.Provider>

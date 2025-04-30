@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { ConnectorInfo, Operation } from "@/services/connectors/connectors.schema"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -15,6 +15,8 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { WorkflowOperationContext } from "../../../_providers/WorkflowOperationProvider"
+import { Textarea } from "@/components/ui/textarea"
 
 const taskFormSchema = z.object({
   name: z.string().min(2, {
@@ -22,43 +24,68 @@ const taskFormSchema = z.object({
   }),
   description: z.string().optional(),
   parameters: z.record(z.string()).nullable().optional(),
-  config: z.string().optional(),
+  config: z.string().nullable().optional(),
   connector_name: z.string(),
   operation: z.string(),
 })
 
 const ConnectorOperation: React.FC<{ connector: ConnectorInfo }> = ({ connector }) => {
   const [currentOperation, setCurrentOperation] = useState<Operation | null>(null)
-
+  const { currentNode, setNodes, closeSidebar } = useContext(WorkflowOperationContext)
+  const [cachedParameter, setCachedParameter] = useState<Record<string, any>>({})
   const taskForm = useForm<z.infer<typeof taskFormSchema>>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: connector.name === currentNode?.data.task?.connector_name ? currentNode?.data.task?.name ?? "" : "",
+      description: connector.name === currentNode?.data.task?.connector_name ? currentNode?.data.task?.description ?? "" : "",
       connector_name: connector.name,
+      operation: connector.name === currentNode?.data.task?.connector_name ? currentNode?.data.task?.operation : undefined,
+      parameters: connector.name === currentNode?.data.task?.connector_name ? currentNode?.data.task?.parameters : undefined,
+      config: connector.name === currentNode?.data.task?.connector_name ? currentNode?.data.task?.config : "",
     },
   })
 
+
   const operationName = taskForm.watch("operation");
+  const parameters = taskForm.watch("parameters")
 
-
+  // use to check if it's first render
+  const isFirstRender = useRef<boolean>(true)
   useEffect(() => {
     if (operationName) {
       const matchedOperation = connector.operations.find(
         ops => ops.title === operationName
       );
       setCurrentOperation(matchedOperation ?? null);
-      taskForm.setValue("parameters", null)
+      taskForm.setValue("parameters", isFirstRender.current ? currentNode?.data.task?.parameters : cachedParameter[operationName])
     }
+    isFirstRender.current = false
   }, [operationName]);
 
-  const onChangeOperationHandler = (value: string) => {
-    const filterOperation = connector.operations.filter(operation => value === operation.annotation)
-    setCurrentOperation(filterOperation[0] ?? null)
-  }
+  useEffect(() => {
+    if (operationName) {
+      setCachedParameter(value => ({
+        ...value,
+        [operationName]: parameters
+      }))
+    }
+
+  }, [parameters, operationName])
+
 
   const onSubmit = (val: z.infer<typeof taskFormSchema>) => {
-    console.log(val)
+    setNodes(nodes => nodes.map(node => {
+      if (!currentNode) return node
+      if (node.id === currentNode.id) {
+        node.data.task = {
+          ...node.data.task,
+          ...val,
+        }
+      }
+      return node
+    }))
+    closeSidebar()
+    setCachedParameter({})
 
   }
 
@@ -85,6 +112,21 @@ const ConnectorOperation: React.FC<{ connector: ConnectorInfo }> = ({ connector 
 
           <Separator className='bg-secondary' />
 
+          <FormField
+            control={taskForm.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Textarea cols={5} placeholder="description" {...field} />
+                </FormControl>
+                <FormDescription />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <div className='py-7'>
             <p>connector information</p>
           </div>
@@ -96,7 +138,7 @@ const ConnectorOperation: React.FC<{ connector: ConnectorInfo }> = ({ connector 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Configuration</FormLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
+                  <Select value={field.value ?? ""} onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="select configuration" />
@@ -145,6 +187,8 @@ const ConnectorOperation: React.FC<{ connector: ConnectorInfo }> = ({ connector 
             />
 
             <Separator className='bg-secondary' />
+
+
 
             {currentOperation && currentOperation.parameters && (
               <FormField
