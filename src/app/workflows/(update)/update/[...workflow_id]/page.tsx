@@ -54,13 +54,35 @@ const WorkflowPlayground: React.FC<{ workflowQuery: UseQueryResult<Workflow, Err
     onEdgesChange,
     setCurrentNode,
     setOpenOperationSidebar,
+    setConnector,
+    connectorQuery,
+    setTaskOperation,
     openOperationSidebar } = useContext(WorkflowOperationContext);
+  
+  // set the connector to the node's connector
+  // can improve later
+  const setConnectorToNodesConnector = (node: Node<PlaybookTaskNode>) => {
+    console.log(connectorQuery?.data, "connectors")
+    if (connectorQuery && node.data.connector_name) {
+        for (let _connector of connectorQuery?.data || []) {
+          console.log(_connector.name, "yuuu")
+          if (_connector.name == node.data.connector_name) {
+            setConnector(_connector || null)
+            setTaskOperation("connector")
+            break
+          }
+        }
+      }
+  }
 
 
   const onNodeDoubleClickHandler = (e: React.MouseEvent<Element, MouseEvent>, node: Node<PlaybookTaskNode>) => {
     setOpenOperationSidebar(true)
     if (node.id !== "select_start") {
+      
       setCurrentNode(node)
+      setConnectorToNodesConnector(node)
+      
     }
     console.log(node)
   }

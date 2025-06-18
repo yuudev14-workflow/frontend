@@ -1,14 +1,19 @@
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { addEdge, Connection, Edge, FinalConnectionState, Node, OnEdgesChange, OnNodesChange, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react'
 import { PlaybookTaskNode } from '@/components/react-flow/schema';
-import { UseQueryResult } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { Edges, Tasks, Workflow, WorkflowDataToUpdate } from '@/services/worfklows/workflows.schema';
 import { FLOW_SELECT_TRIGGER_ID, FLOW_START_ID } from '@/settings/reactFlowIds';
+import { ConnectorInfo } from '@/services/connectors/connectors.schema';
+import ConnectorService from '@/services/connectors/connectors';
 
 export type TaskOperationType = "connector" | "utility" | "code" | "decision" | "wait" | "approval" | "input_prompt" | null
 
 
 export type WorkflowOperationType = {
+  connectorQuery: UseQueryResult<ConnectorInfo[], Error> | null
+  connector: ConnectorInfo | null,
+  setConnector: React.Dispatch<React.SetStateAction<ConnectorInfo | null>>
   taskOperation: TaskOperationType
   setTaskOperation: React.Dispatch<React.SetStateAction<TaskOperationType>>
   openOperationSidebar: boolean
@@ -32,6 +37,9 @@ export type WorkflowOperationType = {
 }
 
 export const WorkflowOperationContext = createContext<WorkflowOperationType>({
+  connectorQuery: null,
+  connector: null,
+  setConnector: () => { },
   taskOperation: null,
   setTaskOperation: () => { },
   openOperationSidebar: false,
@@ -66,6 +74,12 @@ const INITIAL_START_NODE_VALUE: Node<PlaybookTaskNode> = {
 
 
 const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQueryResult<Workflow, Error> }> = ({ children, workflowQuery }) => {
+  const connectorQuery = useQuery({
+    queryKey: ['connectors-lists'], queryFn: async () => {
+      return ConnectorService.getConnectors()
+    }
+  })
+  const [connector, setConnector] = useState<ConnectorInfo | null>(null)
   const [taskOperation, setTaskOperation] = useState<TaskOperationType>(null) // this is to show what operation we need to show in the container
   const [openOperationSidebar, setOpenOperationSidebar] = useState(false)
   const [isNewNode, setIsNewNode] = useState(false)
@@ -82,7 +96,7 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
     const setMappedNodes = (task: Tasks) => {
       const data: Node<PlaybookTaskNode> = {
         id: task.id,
-        data: task.name === FLOW_START_ID ? { label: "start", ...task } : task ,
+        data: task.name === FLOW_START_ID ? { label: "start", ...task } : task,
         position: { x: task.x, y: task.y },
         type: task.name === "start" ? "input" : "playbookNodes",
         draggable: true
@@ -175,6 +189,9 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
   }
   return (
     <WorkflowOperationContext.Provider value={{
+      connectorQuery,
+      connector,
+      setConnector,
       taskOperation,
       setTaskOperation,
       openOperationSidebar,

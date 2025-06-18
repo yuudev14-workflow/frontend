@@ -6,8 +6,8 @@ import ConnectorOperation from "./ConnectorOperation"
 import ConnectorList from "./ConnectorList"
 
 const ConnectorsOption = () => {
-  const [connector, setConnector] = useState<ConnectorInfo | null>(null)
-  const { setTaskOperation } = useContext(WorkflowOperationContext)
+  
+  const { setTaskOperation, connector, setConnector } = useContext(WorkflowOperationContext)
   if (connector === null) return (
     <OperationLayout backHandler={() => {
       setConnector(null)

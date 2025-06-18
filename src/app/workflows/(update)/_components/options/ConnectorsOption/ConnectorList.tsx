@@ -5,13 +5,14 @@ import ConnectorService from "@/services/connectors/connectors"
 import { ConnectorInfo } from "@/services/connectors/connectors.schema"
 import { useQuery } from "@tanstack/react-query"
 import { Inspect } from "lucide-react"
+import { WorkflowOperationContext } from "../../../_providers/WorkflowOperationProvider"
+import { useContext } from "react"
 
 const ConnectorList: React.FC<{ setConnector: React.Dispatch<React.SetStateAction<ConnectorInfo | null>> }> = ({ setConnector }) => {
-  const connectorQuery = useQuery({
-    queryKey: ['connectors-lists'], queryFn: async () => {
-      return ConnectorService.getConnectors()
-    }
-  })
+  const {connectorQuery} = useContext(WorkflowOperationContext)
+  if (connectorQuery == null) {
+    return
+  }
   return (
     <div className='flex-1 flex flex-col gap-3 p-3'>
       <div className='flex flex-col gap-2'>
