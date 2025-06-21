@@ -62,7 +62,6 @@ const WorkflowPlayground: React.FC<{ workflowQuery: UseQueryResult<Workflow, Err
   // set the connector to the node's connector
   // can improve later
   const setConnectorToNodesConnector = (node: Node<PlaybookTaskNode>) => {
-    console.log(connectorQuery?.data, "connectors")
     if (connectorQuery && node.data.connector_name) {
         for (let _connector of connectorQuery?.data || []) {
           console.log(_connector.name, "yuuu")
@@ -104,6 +103,7 @@ const WorkflowPlayground: React.FC<{ workflowQuery: UseQueryResult<Workflow, Err
         <div className="flex gap-2">
           <Button>Trigger</Button>
           <Button>Delete</Button>
+          <Button>Save</Button>
         </div>
       </div>
       <div className="h-[calc(100vh-8rem)]">

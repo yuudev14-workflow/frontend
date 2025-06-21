@@ -37,13 +37,12 @@ const SelectWorkflowTriggerOption = () => {
       return nodes.filter(_node => _node.id !== FLOW_SELECT_TRIGGER_ID).concat({
         id: FLOW_START_ID,
         data: {
-          label: "start", task: {
-            name: "start"
-          }
+          name: FLOW_START_ID
         },
         position: { x: 100, y: 100 },
         type: "start",
         draggable: true,
+        
       })
     })
     setOpenOperationSidebar(false)
