@@ -21,6 +21,13 @@ export type CreateWorkflowPayload = Partial<
   Pick<Workflow, "name" | "description">
 >;
 
+export type UpdateWorkflowPayload = {
+  task: Pick<Workflow, "name" | "trigger_type" | "description">
+  nodes: Tasks[]
+  edges: Record<string, string[]>
+
+}
+
 export type WorkflowFilterPayload = Partial<
   Pick<Workflow, "name" | "trigger_type">
 >;

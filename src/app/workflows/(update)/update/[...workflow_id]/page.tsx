@@ -10,7 +10,7 @@ import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import WorkflowService from "@/services/worfklows/workflows";
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "lucide-react";
-import { Workflow } from "@/services/worfklows/workflows.schema";
+import { UpdateWorkflowPayload, Workflow } from "@/services/worfklows/workflows.schema";
 import WorkflowOperationProvider, {
   WorkflowOperationContext,
 } from "../../_providers/WorkflowOperationProvider";
@@ -35,15 +35,13 @@ const Page: React.FC<{ params: Promise<{ workflow_id: string }> }> = ({
   return (
     <ReactFlowProvider>
       <WorkflowOperationProvider workflowQuery={workflowQuery}>
-        <WorkflowPlayground workflowQuery={workflowQuery} />
+        <WorkflowPlayground />
       </WorkflowOperationProvider>
     </ReactFlowProvider>
   );
 };
 
-const WorkflowPlayground: React.FC<{
-  workflowQuery: UseQueryResult<Workflow, Error>;
-}> = ({ workflowQuery }) => {
+const WorkflowPlayground: React.FC = () => {
   const {
     nodes,
     onNodesChange,
@@ -58,6 +56,7 @@ const WorkflowPlayground: React.FC<{
     setTaskOperation,
     openOperationSidebar,
     workflowData,
+    updateWorkflowMutation
   } = useContext(WorkflowOperationContext);
 
   // set the connector to the node's connector
@@ -96,17 +95,17 @@ const WorkflowPlayground: React.FC<{
    * save all the updated workflow
    */
   const saveWorkflowHandler = () => {
-    const data: any = {};
+    const data: Record<string, any> = {};
     const node_mapper: Record<string, string> = nodes.reduce(
       (prev, curr) => ({ ...prev, [curr.id!]: curr.data.name }),
       {}
     );
-    data["task"] = {
+    data.task = {
       name: workflowData.name,
       trigger_type: workflowData.trigger_type,
     };
 
-    data["nodes"] = nodes.map((_node) => _node.data);
+    data.nodes = nodes.map((_node) => _node.data);
     data["edges"] = edges.reduce(
       (prev, curr) => {
         const sourceNodeName = node_mapper[curr.source]
@@ -121,7 +120,7 @@ const WorkflowPlayground: React.FC<{
       {} as Record<string, string[]>
     );
 
-    console.log(data)
+    updateWorkflowMutation && updateWorkflowMutation.mutate(data as UpdateWorkflowPayload)
   };
 
   return (

@@ -2,6 +2,7 @@ import settings from "@/settings";
 import { EntryResponse } from "../common/schema";
 import {
   CreateWorkflowPayload,
+  UpdateWorkflowPayload,
   Workflow,
   WorkflowFilterPayload,
   WorkflowTriggerType,
@@ -82,6 +83,23 @@ export default class WorkflowService {
   ): Promise<Workflow> => {
     const res = await apiClient.post(
       this.BASE_URL + "/api/v1/workflows",
+      payload
+    );
+    return res.data;
+  };
+
+  /**
+   * update workflow api
+   * @param workflowId 
+   * @param payload 
+   * @returns 
+   */
+  public static updateWorkflow = async (
+    workflowId: string,
+    payload: UpdateWorkflowPayload
+  ): Promise<Workflow> => {
+    const res = await apiClient.put(
+      this.BASE_URL + "/api/v1/workflows/tasks/" + workflowId ,
       payload
     );
     return res.data;

@@ -18,16 +18,19 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import { PlaybookTaskNode } from "@/components/react-flow/schema";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { useMutation, UseMutationResult, useQuery, UseQueryResult } from "@tanstack/react-query";
 import {
   Edges,
   Tasks,
+  UpdateWorkflowPayload,
   Workflow,
   WorkflowDataToUpdate,
 } from "@/services/worfklows/workflows.schema";
 import { FLOW_SELECT_TRIGGER_ID, FLOW_START_ID } from "@/settings/reactFlowIds";
 import { ConnectorInfo } from "@/services/connectors/connectors.schema";
 import ConnectorService from "@/services/connectors/connectors";
+import WorkflowService from "@/services/worfklows/workflows";
+import { toast } from "@/hooks/use-toast";
 
 export type TaskOperationType =
   | "connector"
@@ -41,6 +44,7 @@ export type TaskOperationType =
 
 export type WorkflowOperationType = {
   connectorQuery: UseQueryResult<ConnectorInfo[], Error> | null;
+  updateWorkflowMutation: UseMutationResult<Workflow, Error, UpdateWorkflowPayload, unknown> | null
   connector: ConnectorInfo | null;
   setConnector: React.Dispatch<React.SetStateAction<ConnectorInfo | null>>;
   taskOperation: TaskOperationType;
@@ -73,6 +77,7 @@ export type WorkflowOperationType = {
 export const WorkflowOperationContext = createContext<WorkflowOperationType>({
   connectorQuery: null,
   connector: null,
+  updateWorkflowMutation: null,
   setConnector: () => {},
   taskOperation: null,
   setTaskOperation: () => {},
@@ -122,6 +127,22 @@ const WorkflowOperationProvider: React.FC<{
       return await ConnectorService.getConnectors();
     },
   });
+  const updateWorkflowMutation = useMutation({
+    mutationFn: (workflow: UpdateWorkflowPayload) => {
+      return WorkflowService.updateWorkflow(workflowQuery.data?.id!, workflow)
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "succesfully updated the workflow",
+      })
+    },
+    onError(error) {
+      toast({
+        title: "Error when updating a new workflow",
+        description: error.message,
+      })
+    },
+  })
   const [connector, setConnector] = useState<ConnectorInfo | null>(null);
   const [taskOperation, setTaskOperation] = useState<TaskOperationType>(null); // this is to show what operation we need to show in the container
   const [openOperationSidebar, setOpenOperationSidebar] = useState(false);
@@ -248,6 +269,7 @@ const WorkflowOperationProvider: React.FC<{
     <WorkflowOperationContext.Provider
       value={{
         connectorQuery,
+        updateWorkflowMutation,
         connector,
         setConnector,
         taskOperation,
