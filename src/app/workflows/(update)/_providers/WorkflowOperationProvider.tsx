@@ -1,65 +1,102 @@
-import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
-import { addEdge, Connection, Edge, FinalConnectionState, Node, OnEdgesChange, OnNodesChange, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react'
-import { PlaybookTaskNode } from '@/components/react-flow/schema';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { Edges, Tasks, Workflow, WorkflowDataToUpdate } from '@/services/worfklows/workflows.schema';
-import { FLOW_SELECT_TRIGGER_ID, FLOW_START_ID } from '@/settings/reactFlowIds';
-import { ConnectorInfo } from '@/services/connectors/connectors.schema';
-import ConnectorService from '@/services/connectors/connectors';
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import {
+  addEdge,
+  Connection,
+  Edge,
+  FinalConnectionState,
+  Node,
+  OnEdgesChange,
+  OnNodesChange,
+  useEdgesState,
+  useNodesState,
+  useReactFlow,
+} from "@xyflow/react";
+import { PlaybookTaskNode } from "@/components/react-flow/schema";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  Edges,
+  Tasks,
+  Workflow,
+  WorkflowDataToUpdate,
+} from "@/services/worfklows/workflows.schema";
+import { FLOW_SELECT_TRIGGER_ID, FLOW_START_ID } from "@/settings/reactFlowIds";
+import { ConnectorInfo } from "@/services/connectors/connectors.schema";
+import ConnectorService from "@/services/connectors/connectors";
 
-export type TaskOperationType = "connector" | "utility" | "code" | "decision" | "wait" | "approval" | "input_prompt" | null
-
+export type TaskOperationType =
+  | "connector"
+  | "utility"
+  | "code"
+  | "decision"
+  | "wait"
+  | "approval"
+  | "input_prompt"
+  | null;
 
 export type WorkflowOperationType = {
-  connectorQuery: UseQueryResult<ConnectorInfo[], Error> | null
-  connector: ConnectorInfo | null,
-  setConnector: React.Dispatch<React.SetStateAction<ConnectorInfo | null>>
-  taskOperation: TaskOperationType
-  setTaskOperation: React.Dispatch<React.SetStateAction<TaskOperationType>>
-  openOperationSidebar: boolean
-  setOpenOperationSidebar: React.Dispatch<React.SetStateAction<boolean>>
-  workflowData: WorkflowDataToUpdate
-  setWorkflowData: React.Dispatch<React.SetStateAction<WorkflowDataToUpdate>>
-  currentNode: Node<PlaybookTaskNode> | null
-  setCurrentNode: React.Dispatch<React.SetStateAction<Node<PlaybookTaskNode> | null>>
-  nodes: Node<PlaybookTaskNode>[]
-  setNodes: React.Dispatch<React.SetStateAction<Node<PlaybookTaskNode>[]>>
-  onNodesChange: OnNodesChange<Node<PlaybookTaskNode>>
-  edges: Edge[]
-  setEdges: React.Dispatch<React.SetStateAction<Edge[]>>
-  onEdgesChange: OnEdgesChange<Edge>
-  hasTriggerStep: boolean
-  onConnect: (params: Connection) => void
-  onConnectEnd: (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => void
-  isNewNode: boolean
-  setIsNewNode: React.Dispatch<React.SetStateAction<boolean>>
-  closeSidebar: () => void
-}
+  connectorQuery: UseQueryResult<ConnectorInfo[], Error> | null;
+  connector: ConnectorInfo | null;
+  setConnector: React.Dispatch<React.SetStateAction<ConnectorInfo | null>>;
+  taskOperation: TaskOperationType;
+  setTaskOperation: React.Dispatch<React.SetStateAction<TaskOperationType>>;
+  openOperationSidebar: boolean;
+  setOpenOperationSidebar: React.Dispatch<React.SetStateAction<boolean>>;
+  workflowData: WorkflowDataToUpdate;
+  setWorkflowData: React.Dispatch<React.SetStateAction<WorkflowDataToUpdate>>;
+  currentNode: Node<PlaybookTaskNode> | null;
+  setCurrentNode: React.Dispatch<
+    React.SetStateAction<Node<PlaybookTaskNode> | null>
+  >;
+  nodes: Node<PlaybookTaskNode>[];
+  setNodes: React.Dispatch<React.SetStateAction<Node<PlaybookTaskNode>[]>>;
+  onNodesChange: OnNodesChange<Node<PlaybookTaskNode>>;
+  edges: Edge[];
+  setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
+  onEdgesChange: OnEdgesChange<Edge>;
+  hasTriggerStep: boolean;
+  onConnect: (params: Connection) => void;
+  onConnectEnd: (
+    event: MouseEvent | TouchEvent,
+    connectionState: FinalConnectionState
+  ) => void;
+  isNewNode: boolean;
+  setIsNewNode: React.Dispatch<React.SetStateAction<boolean>>;
+  closeSidebar: () => void;
+};
 
 export const WorkflowOperationContext = createContext<WorkflowOperationType>({
   connectorQuery: null,
   connector: null,
-  setConnector: () => { },
+  setConnector: () => {},
   taskOperation: null,
-  setTaskOperation: () => { },
+  setTaskOperation: () => {},
   openOperationSidebar: false,
-  setOpenOperationSidebar: () => { },
+  setOpenOperationSidebar: () => {},
   workflowData: {},
-  setWorkflowData: () => { },
+  setWorkflowData: () => {},
   currentNode: null,
-  setCurrentNode: () => { },
+  setCurrentNode: () => {},
   nodes: [],
-  setNodes: () => { },
-  onNodesChange: () => { },
+  setNodes: () => {},
+  onNodesChange: () => {},
   edges: [],
-  setEdges: () => { },
-  onEdgesChange: () => { },
+  setEdges: () => {},
+  onEdgesChange: () => {},
   hasTriggerStep: false,
-  onConnect: (params: Connection) => { },
-  onConnectEnd: (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => { },
+  onConnect: (params: Connection) => {},
+  onConnectEnd: (
+    event: MouseEvent | TouchEvent,
+    connectionState: FinalConnectionState
+  ) => {},
   isNewNode: false,
-  setIsNewNode: () => { },
-  closeSidebar: () => { },
+  setIsNewNode: () => {},
+  closeSidebar: () => {},
 });
 
 const INITIAL_START_NODE_VALUE: Node<PlaybookTaskNode> = {
@@ -67,68 +104,85 @@ const INITIAL_START_NODE_VALUE: Node<PlaybookTaskNode> = {
   data: {
     label: FLOW_SELECT_TRIGGER_ID.replace("_", " "),
   },
-  position: { x: 100, y: 100 },
+  position: {
+    x: 100,
+    y: 100,
+  },
   type: "start",
-  draggable: false
-}
+  draggable: false,
+};
 
-
-const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQueryResult<Workflow, Error> }> = ({ children, workflowQuery }) => {
+const WorkflowOperationProvider: React.FC<{
+  children: any;
+  workflowQuery: UseQueryResult<Workflow, Error>;
+}> = ({ children, workflowQuery }) => {
   const connectorQuery = useQuery({
-    queryKey: ['connectors-lists'], queryFn: async () => {
-      return ConnectorService.getConnectors()
-    }
-  })
-  const [connector, setConnector] = useState<ConnectorInfo | null>(null)
-  const [taskOperation, setTaskOperation] = useState<TaskOperationType>(null) // this is to show what operation we need to show in the container
-  const [openOperationSidebar, setOpenOperationSidebar] = useState(false)
-  const [isNewNode, setIsNewNode] = useState(false)
-  const [workflowData, setWorkflowData] = useState<WorkflowDataToUpdate>({})
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node<PlaybookTaskNode>>([])
-  const [currentNode, setCurrentNode] = useState<Node<PlaybookTaskNode> | null>(null)
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
+    queryKey: ["connectors-lists"],
+    queryFn: async () => {
+      return await ConnectorService.getConnectors();
+    },
+  });
+  const [connector, setConnector] = useState<ConnectorInfo | null>(null);
+  const [taskOperation, setTaskOperation] = useState<TaskOperationType>(null); // this is to show what operation we need to show in the container
+  const [openOperationSidebar, setOpenOperationSidebar] = useState(false);
+  const [isNewNode, setIsNewNode] = useState(false);
+  const [workflowData, setWorkflowData] = useState<WorkflowDataToUpdate>({});
+  const [nodes, setNodes, onNodesChange] = useNodesState<
+    Node<PlaybookTaskNode>
+  >([]);
+  const [currentNode, setCurrentNode] = useState<Node<PlaybookTaskNode> | null>(
+    null
+  );
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { screenToFlowPosition } = useReactFlow();
   let id = 1;
   const getId = () => `${id++}`;
-
 
   useEffect(() => {
     const setMappedNodes = (task: Tasks) => {
       const data: Node<PlaybookTaskNode> = {
         id: task.id,
-        data: task.name === FLOW_START_ID ? { label: "start", ...task } : task,
-        position: { x: task.x, y: task.y },
+        data:
+          task.name === FLOW_START_ID
+            ? {
+                label: "start",
+                ...task,
+              }
+            : task,
+        position: {
+          x: task.x,
+          y: task.y,
+        },
         type: task.name === "start" ? "input" : "playbookNodes",
-        draggable: true
-      }
+        draggable: true,
+      };
 
-      return data
-    }
+      return data;
+    };
 
     const setMappedEdges = (edge: Edges) => ({
       id: edge.id,
       source: edge.source_id,
       target: edge.destination_id,
-    })
-    const _nodes = workflowQuery.data?.tasks?.map(setMappedNodes) ?? []
-    // if task doesnt have a node with a name start, 
-    // add a new node for selecting a trigger. open the sidebar 
+    });
+    const _nodes = workflowQuery.data?.tasks?.map(setMappedNodes) ?? [];
+    // if task doesnt have a node with a name start,
+    // add a new node for selecting a trigger. open the sidebar
     // operation to notify the user to select trigger quickly
-    if (_nodes.some(task => task.data?.name === FLOW_START_ID) == false) {
-      _nodes.unshift(INITIAL_START_NODE_VALUE)
-      setCurrentNode(INITIAL_START_NODE_VALUE)
-      setOpenOperationSidebar(true)
+    if (_nodes.some((task) => task.data?.name === FLOW_START_ID) == false) {
+      _nodes.unshift(INITIAL_START_NODE_VALUE);
+      setCurrentNode(INITIAL_START_NODE_VALUE);
+      setOpenOperationSidebar(true);
     }
-    setNodes(_nodes)
-    setEdges(workflowQuery.data?.edges?.map(setMappedEdges) ?? [])
+    setNodes(_nodes);
+    setEdges(workflowQuery.data?.edges?.map(setMappedEdges) ?? []);
     if (workflowQuery.data)
       setWorkflowData({
         name: workflowQuery.data.name,
         description: workflowQuery.data.description,
-        trigger_type: workflowQuery.data.trigger_type
-      })
-
-  }, [workflowQuery.isFetched])
+        trigger_type: workflowQuery.data.trigger_type,
+      });
+  }, [workflowQuery.isFetched]);
 
   /**
    * return false if no tasks has a name start
@@ -137,13 +191,15 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
    * to select task options
    */
   const hasTriggerStep = useMemo(() => {
-    return workflowData.trigger_type != undefined || workflowData.trigger_type != null
-
-  }, [workflowData])
+    return (
+      workflowData.trigger_type != undefined ||
+      workflowData.trigger_type != null
+    );
+  }, [workflowData]);
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-    [],
+    []
   );
   const onConnectEnd = useCallback(
     (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => {
@@ -152,7 +208,7 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
         // we need to remove the wrapper bounds, in order to get the correct position
         const id = getId();
         const { clientX, clientY } =
-          'changedTouches' in event ? event.changedTouches[0] : event;
+          "changedTouches" in event ? event.changedTouches[0] : event;
         const newNode: Node<PlaybookTaskNode> = {
           id,
           position: screenToFlowPosition({
@@ -161,61 +217,63 @@ const WorkflowOperationProvider: React.FC<{ children: any, workflowQuery: UseQue
           }),
           data: {},
           type: "playbookNodes",
-          draggable: true
+          draggable: true,
         };
 
         setNodes((nds) => nds.concat(newNode));
-        setCurrentNode(newNode)
+        setCurrentNode(newNode);
 
         setEdges((eds) =>
-          eds.concat({ id, source: connectionState.fromNode!.id, target: id, }),
+          eds.concat({
+            id,
+            source: connectionState.fromNode!.id,
+            target: id,
+          })
         );
 
-        setOpenOperationSidebar(true)
-        setIsNewNode(true)
-
-
+        setOpenOperationSidebar(true);
+        setIsNewNode(true);
       }
     },
-    [screenToFlowPosition],
+    [screenToFlowPosition]
   );
 
   const closeSidebar = () => {
-    setOpenOperationSidebar(false)
-    setCurrentNode(null)
-    setIsNewNode(false)
-    setTaskOperation(null)
-
-  }
+    setOpenOperationSidebar(false);
+    setCurrentNode(null);
+    setIsNewNode(false);
+    setTaskOperation(null);
+  };
   return (
-    <WorkflowOperationContext.Provider value={{
-      connectorQuery,
-      connector,
-      setConnector,
-      taskOperation,
-      setTaskOperation,
-      openOperationSidebar,
-      setOpenOperationSidebar,
-      workflowData,
-      setWorkflowData,
-      nodes,
-      currentNode,
-      setCurrentNode,
-      setNodes,
-      onNodesChange,
-      edges,
-      setEdges,
-      onEdgesChange,
-      hasTriggerStep,
-      onConnect,
-      onConnectEnd,
-      isNewNode,
-      setIsNewNode,
-      closeSidebar,
-    }}>
+    <WorkflowOperationContext.Provider
+      value={{
+        connectorQuery,
+        connector,
+        setConnector,
+        taskOperation,
+        setTaskOperation,
+        openOperationSidebar,
+        setOpenOperationSidebar,
+        workflowData,
+        setWorkflowData,
+        nodes,
+        currentNode,
+        setCurrentNode,
+        setNodes,
+        onNodesChange,
+        edges,
+        setEdges,
+        onEdgesChange,
+        hasTriggerStep,
+        onConnect,
+        onConnectEnd,
+        isNewNode,
+        setIsNewNode,
+        closeSidebar,
+      }}>
       {children}
     </WorkflowOperationContext.Provider>
-  )
-}
+  );
+};
 
-export default WorkflowOperationProvider
+export default WorkflowOperationProvider;

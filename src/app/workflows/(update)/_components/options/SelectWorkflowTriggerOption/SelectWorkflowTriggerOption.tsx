@@ -16,7 +16,7 @@ const SelectWorkflowTriggerOption = () => {
   const triggerTypesQuery = useQuery({
     queryKey: ['workflow-trigger-type-lists'],
     queryFn: async () => {
-      return WorkflowService.getWorkflowTriggerTypes()
+      return await WorkflowService.getWorkflowTriggerTypes()
     }
   })
 
@@ -37,7 +37,8 @@ const SelectWorkflowTriggerOption = () => {
       return nodes.filter(_node => _node.id !== FLOW_SELECT_TRIGGER_ID).concat({
         id: FLOW_START_ID,
         data: {
-          name: FLOW_START_ID
+          name: FLOW_START_ID,
+          label: "manual"
         },
         position: { x: 100, y: 100 },
         type: "start",
