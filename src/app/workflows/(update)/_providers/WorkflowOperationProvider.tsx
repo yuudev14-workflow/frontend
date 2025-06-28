@@ -128,8 +128,8 @@ const WorkflowOperationProvider: React.FC<{
     },
   });
   const updateWorkflowMutation = useMutation({
-    mutationFn: (workflow: UpdateWorkflowPayload) => {
-      return WorkflowService.updateWorkflow(workflowQuery.data?.id!, workflow)
+    mutationFn: async(workflow: UpdateWorkflowPayload) => {
+      return await WorkflowService.updateWorkflow(workflowQuery.data?.id!, workflow)
     },
     onSuccess: (data) => {
       toast({
@@ -158,6 +158,17 @@ const WorkflowOperationProvider: React.FC<{
   const { screenToFlowPosition } = useReactFlow();
   let id = 1;
   const getId = () => `${id++}`;
+
+  useEffect(() => {
+    if (workflowQuery.status == "error") {
+      toast({
+        title: "error fetching worfklow",
+        description: workflowQuery.error.message
+      })
+      
+    }
+
+  }, [workflowQuery.status])
 
   useEffect(() => {
     const setMappedNodes = (task: Tasks) => {

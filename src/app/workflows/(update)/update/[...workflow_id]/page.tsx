@@ -100,12 +100,17 @@ const WorkflowPlayground: React.FC = () => {
       (prev, curr) => ({ ...prev, [curr.id!]: curr.data.name }),
       {}
     );
+    console.log(nodes)
     data.task = {
       name: workflowData.name,
       trigger_type: workflowData.trigger_type,
     };
 
-    data.nodes = nodes.map((_node) => _node.data);
+    data.nodes = nodes.map((_node) => ({
+      ..._node.data,
+      x: _node.position.x,
+      y: _node.position.y
+    }));
     data["edges"] = edges.reduce(
       (prev, curr) => {
         const sourceNodeName = node_mapper[curr.source]
